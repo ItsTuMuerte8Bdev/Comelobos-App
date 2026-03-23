@@ -16,7 +16,7 @@
         <div class="device" role="application">
             <main class="hero">
                 <div>
-                    <h1>¡Hola Jovan Bautista!</h1>
+                    <h1>¡Hola {{ $nombreUsuario }}!</h1>
                     <p>¿Se te antoja algo?</p>
                 </div>
             </main>

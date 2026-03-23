@@ -1,15 +1,13 @@
 <?php
 
+use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Ruta de la pantalla principal (a la que redirige la pantalla de bienvenida)
-Route::get('/index', function () {
-    return view('index');
-});
+Route::get('/index', [PageController::class, 'index']);
 
 Route::get('/cuenta', function () {
     return view('account');
