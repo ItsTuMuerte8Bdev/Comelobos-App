@@ -1,0 +1,84 @@
+/* Paleta de colores y tipografía unificada para la app
+   Archivo: public/css/palette.css
+   - Variables de color (colores extraídos de index.css)
+   - Estilos base para botones y superficies que usan la paleta
+*/
+:root{
+  /* Colores */
+  --color-bg: #eef3f6;
+  --color-surface: #ffffff;
+  --color-primary: #053f56; /* principal */
+  --color-primary-variant: #0b3550; /* variante oscura */
+  --color-primary-contrast: #ffffff;
+  --color-muted: #6b6b6b;
+  --color-muted-2: #aab6bd;
+  --color-text: #111111;
+  --color-border: #dddddd;
+  --color-shadow: rgba(2,10,18,0.12);
+  --color-primary-07: rgba(5,63,86,0.07);
+  --color-primary-shadow: rgba(5,63,86,0.12);
+  --color-primary-06: rgba(5,63,86,0.06);
+  --color-black-06: rgba(0,0,0,0.06);
+  --color-white: #ffffff;
+
+  /* Semánticos */
+  --color-success: #27ae60;
+  --color-danger: #e74c3c;
+  --color-warning: #f39c12;
+  --color-info: #3498db;
+
+  /* Tipografía */
+  --font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-weight-regular: 300;
+  --font-weight-medium: 600;
+  --font-weight-bold: 800;
+  --font-size-base: 16px;
+}
+
+/* Aplicar valores base */
+body{background:var(--color-bg);color:var(--color-text);font-family:var(--font-family-base);font-size:var(--font-size-base)}
+
+/* Botones reutilizables */
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:0.5rem 0.75rem;border:1px solid transparent;font-weight:var(--font-weight-medium);cursor:pointer;transition:all .12s ease}
+
+.btn-primary{background:var(--color-primary);color:var(--color-primary-contrast);box-shadow:0 6px 18px var(--color-primary-shadow);border-color:transparent}
+.btn-primary:hover{filter:brightness(.96);transform:translateY(-1px)}
+
+.btn-outline{background:transparent;color:var(--color-primary);border:1px solid var(--color-primary-07)}
+.btn-ghost{background:transparent;color:var(--color-text);border-color:transparent}
+.btn-secondary{background:var(--color-primary-variant);color:var(--color-primary-contrast);border-color:transparent}
+
+.btn-success{background:var(--color-success);color:#fff}
+.btn-danger{background:var(--color-danger);color:#fff}
+.btn-link{background:transparent;color:var(--color-primary);text-decoration:underline;padding:0}
+
+/* Superficies y tarjetas */
+.surface{background:var(--color-surface);border:1px solid var(--color-border);box-shadow:0 10px 30px var(--color-shadow);border-radius:8px}
+.card{padding:12px;border-radius:8px;background:var(--color-surface);border:1px solid var(--color-border)}
+
+/* Utilidades específicas (coinciden con estilos existentes) */
+.nav-active{color:var(--color-primary);font-weight:var(--font-weight-medium);background:var(--color-primary-07);box-shadow:inset 0 -2px 0 rgba(5,63,86,0.06);border-radius:10px;padding:.45rem .6rem}
+
+/* Encabezado de las pantallas internas (unificado) */
+.app-header{background:var(--color-primary);color:var(--color-primary-contrast);position:sticky;top:0;z-index:20;box-shadow:0 2px 6px rgba(2,10,18,0.06);}
+.app-header .header-inner{position:relative;width:100%;padding:8px 0;text-align:center}
+.app-header h2{margin:0;font-size:1.1rem;font-weight:700;color:var(--color-primary-contrast)}
+.back-btn{background:#48b8e6;color:white;border-radius:10px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;position:absolute;left:12px;top:6px;border:none}
+.content-section{flex:1 1 auto;padding-top:32px}
+
+/* Variante más pequeña del header para vistas específicas */
+.app-header-small .header-inner{padding:6px 0}
+.app-header-small h2{font-size:1rem}
+.app-header-small{height:130px !important;min-height:130px !important;display:flex;align-items:center;justify-content:center}
+.app-header-small .header-inner{height:100%;display:flex;align-items:center;justify-content:center}
+.app-header-small h2{margin:0}
+.app-header-small + .content-section{padding-top:16px !important}
+/* Variables auxiliares para sombras y bordes desde la paleta */
+.shadow-soft{box-shadow:0 6px 18px var(--color-shadow)}
+.border-muted{border-color:var(--color-border)}
+
+/* Pequeñas helpers para texto */
+.text-muted{color:var(--color-muted)}
+.text-muted-2{color:var(--color-muted-2)}
+
+/* Fin de palette.css */

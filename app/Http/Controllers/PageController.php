@@ -8,12 +8,11 @@ use Illuminate\Support\Facades\DB;
 class PageController extends Controller
 {
     public function index() {
-        $menuDeHoy = DB::table('menus')->where('status', 'available')->first();    
-        $apodo = 'Yayo';
+        $estudiante = DB::table('students')->first();
+        $nombreUsuario = $estudiante->first_name ?? 'Usuario';
 
         return view('index', [
-            'nombreUsuario' => $apodo,
-            'menuDelDia' => $menuDeHoy
+            'nombreUsuario' => $nombreUsuario
         ]);
 
     }
