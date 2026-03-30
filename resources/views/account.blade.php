@@ -21,8 +21,11 @@
                     <a href="/informacion" class="btn account-btn w-75">Información personal</a>
                     <a href="/contactos" class="btn account-btn w-75">Contactos</a>
                     <a href="/ajustes" class="btn account-btn w-75">Ajustes</a>
-                    <form method="POST" action="#" class="w-75">
-                        <button type="submit" class="btn account-btn w-100">Cerrar sesión</button>
+                    <form method="POST" action="{{ route('logout') }}" class="w-75">
+                        @csrf
+                        <button type="submit" class="btn account-btn w-100">Cerrar sesión
+                            
+                        </button>
                     </form>
                 </div>
             </section>

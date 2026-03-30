@@ -2,14 +2,31 @@
 
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout(); 
+    
+    $request->session()->invalidate(); 
+    $request->session()->regenerateToken(); 
+    
+    return redirect('/login'); 
+})->name('logout');
+
+
+
 Route::get('/index', [PageController::class, 'index']);
 
-Route::get('/cuenta', function () {
+Route::get('/account', function () {
     return view('account');
 });
 

@@ -15,9 +15,9 @@
     </head>
     <body>
         <div class="device" role="application">
-            <main class="hero app-header app-header-small">
+            <main style="padding-top: 16px !important;" class="hero app-header">
                 <div class="header-inner">
-                    <a href="/cuenta" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+                    <a href="/account" class="back-btn"><i class="bi bi-arrow-left"></i></a>
                     <h2>Ajustes</h2>
                 </div>
             </main>

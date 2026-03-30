@@ -6,7 +6,7 @@
         ['key' => 'reservas', 'label' => 'Reservas', 'icon' => 'bi-calendar2-event', 'href' => url('/reservas')],
         ['key' => 'checkin', 'label' => 'Check-In', 'icon' => 'bi-qr-code', 'href' => url('/checkin')],
         ['key' => 'menu', 'label' => 'Menú', 'icon' => 'bi-list', 'href' => url('/menu')],
-        ['key' => 'cuenta', 'label' => 'Cuenta', 'icon' => 'bi-person', 'href' => url('/cuenta')],
+        ['key' => 'cuenta', 'label' => 'Cuenta', 'icon' => 'bi-person', 'href' => url('/account')],
     ];
 @endphp
 
@@ -17,7 +17,7 @@
                 @php $isActive = ($activeTab === $it['key']); @endphp
                 <li class="nav-item text-center w-100">
                     <a class="nav-link {{ $isActive ? 'active text-dark d-flex flex-column align-items-center' : 'text-dark d-flex flex-column align-items-center' }}" href="{{ $it['href'] }}" {!! $isActive ? 'aria-current="page"' : '' !!}>
-                        <i class="bi {{ $it['icon'] }}" style="font-size:1.35rem"></i>
+                        <i class="bi {{ $it['icon'] }}" style="font-size:1.5rem"></i>
                         <span class="nav-label">{{ $it['label'] }}</span>
                     </a>
                 </li>
