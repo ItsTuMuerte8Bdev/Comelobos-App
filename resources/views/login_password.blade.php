@@ -25,7 +25,7 @@
     <a href="/login" class="link-back">‹ Atrás</a>
     <div class="brand">COMELOBOS</div>
     <div class="card">
-        <form method="POST" action="/login">
+        <form method="POST" action="{{ route('login.attempt') }}">
             @csrf
 
             <label for="password">Contraseña</label>

@@ -1,83 +1,71 @@
 <?php
 
-use App\Http\Controllers\PageController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Http\Controllers\PageController; // Logica
+use App\Http\Controllers\AuthController; // Autenticador
+use Illuminate\Support\Facades\Route; // Direccionador
+use Illuminate\Http\Request; // Lectura de datos
 
+// Interfaz 1: Bienvenida
 Route::get('/', function () {
     return view('welcome');
+})->name('welcome');
+
+// Interfaz 2: Login(Invitado)
+Route::middleware('guest')->group(function () {
+
+    // Interfaz 2.1: Email
+    Route::get('/login', function () {
+        return view('login');
+    })->name('login');
+
+    // Interfaz 2.2: Contraseña
+    Route::post('/login/password', function (Request $request) {
+        return view('login_password', ['email' => $request->input('email')]);
+    })->name('login.password');
+
+    // 2.3: Verifica Credenciales
+    Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 });
 
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+// Interfaz 3: Login(Autenticado)
+Route::middleware('auth')->group(function () {
 
-Route::post('/logout', function (Request $request) {
-    Auth::logout(); 
-    
-    $request->session()->invalidate(); 
-    $request->session()->regenerateToken(); 
-    
-    return redirect('/login'); 
-})->name('logout');
+    // Interfaz 3.1: Pagina Principal
+    Route::get('/index', [PageController::class, 'index'])->name('index');
 
+    // Rutas que devuelven vistas directamente para el usuario autenticado.
+    Route::get('/account', function () {
+        return view('account');
+    })->name('account');
 
+    Route::get('/informacion', function () {
+        return view('informacion');
+    });
 
-Route::get('/index', [PageController::class, 'index']);
+    Route::get('/contactos', function () {
+        return view('contactos');
+    });
 
-Route::get('/account', function () {
-    return view('account');
-});
+    Route::get('/ajustes', function () {
+        return view('ajustes');
+    });
 
-Route::get('/informacion', function () {
-    return view('informacion');
-});
+    Route::get('/menu', function () {
+        return view('menu');
+    });
 
-Route::get('/contactos', function () {
-    return view('contactos');
-});
+    Route::get('/reservas', function () {
+        return view('reservas');
+    });
 
-Route::get('/ajustes', function () {
-    return view('ajustes');
-});
+    Route::get('/checkin', function () {
+        return view('checkin');
+    });
 
-Route::get('/menu', function () {
-    return view('menu');
-});
+    Route::get('/reservar', function () {
+        return view('reservar');
+    });
 
-Route::get('/reservas', function () {
-    return view('reservas');
-});
-
-Route::get('/checkin', function () {
-    return view('checkin');
-});
-
-Route::get('/reservar', function () {
-    return view('reservar');
-});
-
-Route::get('/register', function () {
-    return view('register');
-});
-
-Route::post('/register', function (\Illuminate\Http\Request $request) {
-    // Por ahora no validamos ni guardamos; simplemente redirigimos al index
-    return redirect('/index');
-});
-
-// Rutas de inicio de sesión (flujo: email -> contraseña -> redirigir al index)
-Route::get('/login', function () {
-    return view('login');
-});
-
-Route::post('/login/password', function (\Illuminate\Http\Request $request) {
-    // Recibimos el email y mostramos la pantalla de contraseña
-    return view('login_password', ['email' => $request->input('email')]);
-});
-
-Route::post('/login', function (\Illuminate\Http\Request $request) {
-    // Por ahora no validamos; simplemente redirigimos al index
-    return redirect('/index');
+    // Logout mediante AuthController. Cierra sesión y redirige.
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
