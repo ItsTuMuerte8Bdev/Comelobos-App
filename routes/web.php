@@ -25,6 +25,15 @@ Route::middleware('guest')->group(function () {
 
     // 2.3: Verifica Credenciales
     Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
+
+    // Interfaz 2.4: Registrarse
+    Route::get('/register', function () {
+        return view('register');
+    })->name('register');
+
+    // Interfaz 2.5: Procesar Registro
+    Route::post('/register', [AuthController::class, 'register'])->name('register.attempt');
+
 });
 
 // Interfaz 3: Login(Autenticado)

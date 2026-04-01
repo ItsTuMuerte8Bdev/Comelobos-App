@@ -1,25 +1,70 @@
 <!doctype html>
+{{-- Formulario de Registro de Nuevos Usuarios --}}
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registrarse - Comelobos</title>
+    {{-- Incluye el archivo CSS principal de la aplicación --}}
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-        :root {
-            --primary: var(--color-primary, #113b78);
-            --accent: var(--color-accent, #e22b20);
-            --muted: #f1f3f4;
-            --input-bg: #eef1f3;
+        :root { /* Paleta de Colores */
+            --primary: var(--color-primary, #113b78); /* Color Primario */
+            --accent: var(--color-accent, #e22b20); /* Color del Botón */
+            --muted: #f1f3f4; /* Color Desapercibido */
+            --input-bg: #eef1f3; /* Color de fondo de Input */
         }
-        body{font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; padding:0; background:#fff}
-        .wrap{max-width:520px;margin:30px auto;padding:28px}
-        .brand{color:var(--primary);text-align:center;font-weight:700;font-size:44px;margin:18px 0}
-        .card{background:#fff;padding:18px;border-radius:6px}
-        label{display:block;margin:12px 0 6px;color:#222}
-        input[type="text"], input[type="email"], input[type="tel"]{width:100%;padding:12px;border-radius:8px;background:var(--input-bg);border:1px solid #e6e9eb}
-        .btn{display:block;width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:600;margin-top:18px}
-        .muted{color:#777;text-align:center;margin-top:14px}
+        body { /* Cuerpo de la Página */
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; /* Fuentes */
+            margin: 0; /* Margen */
+            padding: 0; /* Relleno */
+            background: #fff; /* Color de fondo */
+        }
+        .wrap { /* Contenedor Principal */
+            max-width: 520px; /* Ancho máximo */
+            margin: 30px auto; /* Margen */
+            padding: 28px; /* Relleno interno */
+        }
+        .brand { /* Título */
+            color: var(--primary); /* Color del texto */
+            text-align: center; /* Alineación del texto */
+            font-weight: 700; /* Peso de la fuente */
+            font-size: 44px; /* Tamaño de la fuente */
+            margin: 18px 0; /* Margen */
+        }
+        .card { /* Tarjeta del Formulario */
+            background: #fff; /* Color de fondo */
+            padding: 18px; /* Relleno interno */
+            border-radius: 6px; /* Radio del borde */
+        }
+        label { /* Etiquetas de los campos */
+            display: block; /* Tipo de display */
+            margin: 12px 0 6px; /* Margen */
+            color: #222; /* Color del texto */
+        }
+        input[type="text"], input[type="email"], input[type="tel"] { /* Inputs de Texto */
+            width: 100%; /* Ancho */
+            padding: 12px; /* Relleno interno */
+            border-radius: 8px; /* Radio del borde */
+            background: var(--input-bg); /* Color de fondo */
+            border: 1px solid #e6e9eb; /* Borde */
+        }
+        .btn { /* Botón de Registrarse */
+            display: block; /* Tipo de display */
+            width: 105%; /* Ancho */
+            padding: 14px; /* Relleno interno */
+            background: var(--accent); /* Color de fondo */
+            color: #fff; /* Color del texto */
+            border: none; /* Borde */
+            border-radius: 6px; /* Radio del borde */
+            font-weight: 600; /* Peso de la fuente */
+            margin-top: 18px; /* Margen superior */
+        }
+        .muted { /* Texto Desapercibido */
+            color: #777; /* Color del texto */
+            text-align: center; /* Alineación del texto */
+            margin-top: 14px; /* Margen superior */
+        }
     </style>
 </head>
 <body>
@@ -27,7 +72,9 @@
     <div class="brand">COMELOBOS</div>
 
     <div class="card">
+        {{-- Formulario para registrar nuevos usuarios --}}
         <form method="POST" action="/register">
+            {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
 
             <label for="nombre">Nombre</label>
