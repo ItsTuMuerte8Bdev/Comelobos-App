@@ -14,6 +14,7 @@ class User extends Authenticatable {
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'role',
         'is_active',
@@ -39,5 +40,4 @@ class User extends Authenticatable {
     public function validatedConsumptionLogs(): HasMany {
         return $this->hasMany(ConsumptionLog::class, 'validated_by');
     }
-
 }

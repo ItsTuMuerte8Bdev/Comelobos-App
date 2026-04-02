@@ -16,21 +16,13 @@ class StudentController extends Controller {
         return response()->json($students);
     }
 
-
     public function store(Request $request) {
         $validated = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id', 'unique:students,user_id'],
             'student_code' => ['required', 'string', 'max:20', 'unique:students,student_code'],
-            'first_name' => ['required', 'string', 'max:100'],
+            'first_name' => ['required', 'string', 'max:150'],
             'last_name' => ['required', 'string', 'max:100'],
             'second_last_name' => ['nullable', 'string', 'max:100'],
-            'faculty' => ['required', 'string', 'max:150'],
-            'semester' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'alternate_email' => ['nullable', 'email', 'max:255'],
-            'academic_status' => ['required', Rule::in([
-                'active',
-                'inactive'
-            ])]
         ]);
 
         $student = Student::create($validated);
@@ -69,29 +61,10 @@ class StudentController extends Controller {
                 'max:20',
                 Rule::unique('students', 'student_code')->ignore($student->id)
             ],
-            'first_name' => ['required', 'string', 'max:100'],
+            'first_name' => ['required', 'string', 'max:150'],
             'last_name' => ['required', 'string', 'max:100'],
             'second_last_name' => ['nullable', 'string', 'max:100'],
-            'faculty' => ['required', 'string', 'max:150'],
-            'semester' => ['nullable', 'integer', 'min:1', 'max:20'],
-            'alternate_email' => ['nullable', 'email', 'max:255'],
-            'academic_status' => ['required', Rule::in([
-                'active',
-                'inactive'
-            ])]
         ]);
-
-        if ($student->reservations()->exists() && $validated['academic_status'] === 'inactive') {
-            $hasActiveReservations = $student->reservations()
-                ->whereIn('status', ['pending_payment', 'paid'])
-                ->exists();
-
-            if ($hasActiveReservations) {
-                return response()->json([
-                    'message' => 'No se puede inactivar un estudiante con reservaciones activas'
-                ], 422);
-            }
-        }
 
         $student->update($validated);
 

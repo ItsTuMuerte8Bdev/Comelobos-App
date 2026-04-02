@@ -13,10 +13,6 @@ class Student extends Model {
         'first_name',
         'last_name',
         'second_last_name',
-        'faculty',
-        'semester',
-        'alternate_email',
-        'academic_status',
     ];
 
     public function user(): BelongsTo {
@@ -26,5 +22,4 @@ class Student extends Model {
     public function reservations(): HasMany {
         return $this->hasMany(Reservation::class);
     }
-
 }
