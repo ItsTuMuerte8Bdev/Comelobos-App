@@ -8,75 +8,76 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller {
     public function index() {
-        $users = User::with('student')->get();
+        $users = User::query()->get();
 
         return response()->json($users);
     }
 
     public function store(Request $request) {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'matriculation_number' => ['required', 'string', 'max:20', 'unique:users,matriculation_number'],
+            'first_name' => ['required', 'string', 'max:150'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'second_last_name' => ['required', 'string', 'max:100'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', Rule::in(['student', 'administrative'])],
-            'is_active' => ['sometimes', 'boolean'],
         ]);
 
         $user = User::create($validated);
 
         return response()->json([
             'message' => 'Usuario creado correctamente',
-            'data' => $user->load('student'),
+            'data' => $user,
         ], 201);
     }
 
     public function show(string $id) {
-        $user = User::with('student')->findOrFail($id);
+        $user = User::findOrFail($id);
 
         return response()->json($user);
     }
 
     public function update(Request $request, string $id) {
-        $user = User::with('student')->findOrFail($id);
+        $user = User::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'matriculation_number' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('users', 'matriculation_number')->ignore($user->id),
+            ],
+            'first_name' => ['required', 'string', 'max:150'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'second_last_name' => ['required', 'string', 'max:100'],
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('users', 'phone')->ignore($user->id),
+            ],
             'email' => [
-                'sometimes',
                 'required',
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'phone' => [
-                'sometimes',
-                'nullable',
-                'string',
-                'max:20',
-                Rule::unique('users', 'phone')->ignore($user->id),
-            ],
-            'password' => ['sometimes', 'required', 'string', 'min:8'],
-            'role' => ['sometimes', 'required', Rule::in(['student', 'administrative'])],
-            'is_active' => ['sometimes', 'boolean'],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', Rule::in(['student', 'administrative'])],
         ]);
 
         $user->update($validated);
 
         return response()->json([
             'message' => 'Usuario actualizado correctamente',
-            'data' => $user->fresh()->load('student'),
+            'data' => $user->fresh(),
         ]);
     }
 
     public function destroy(string $id) {
-        $user = User::with('student')->findOrFail($id);
-
-        if ($user->student) {
-            return response()->json([
-                'message' => 'No se puede eliminar un usuario asociado a un estudiante',
-            ], 422);
-        }
+        $user = User::findOrFail($id);
 
         $user->delete();
 

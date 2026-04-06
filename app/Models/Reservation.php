@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Reservation extends Model {
     protected $fillable = [
-        'student_id',
+        'user_id',
         'shift_id',
         'menu_id',
         'reservation_date',
@@ -17,8 +17,8 @@ class Reservation extends Model {
         'status',
     ];
 
-    public function student(): BelongsTo {
-        return $this->belongsTo(Student::class);
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
     }
 
     public function shift(): BelongsTo {
@@ -36,5 +36,4 @@ class Reservation extends Model {
     public function consumptionLog(): HasOne {
         return $this->hasOne(ConsumptionLog::class);
     }
-
 }

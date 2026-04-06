@@ -8,10 +8,9 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ConsumptionLogSeeder extends Seeder {
-
     public function run(): void {
         $reservation = Reservation::first();
-        $cashier = User::where('role', 'cashier')->first();
+        $cashier = User::where('role', 'administrative')->first();
 
         if (!$reservation) {
             return;
@@ -20,7 +19,6 @@ class ConsumptionLogSeeder extends Seeder {
         ConsumptionLog::updateOrCreate(
             ['reservation_id' => $reservation->id],
             [
-                'student_id' => $reservation->student_id,
                 'shift_id' => $reservation->shift_id,
                 'validated_by' => $cashier?->id,
                 'checked_in_at' => now(),
@@ -28,5 +26,4 @@ class ConsumptionLogSeeder extends Seeder {
             ]
         );
     }
-
 }

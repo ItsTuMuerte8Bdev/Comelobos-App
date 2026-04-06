@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 class ReservationController extends Controller {
     public function index() {
         $reservations = Reservation::with([
-            'student',
+            'user',
             'shift',
             'menu',
             'payment',
@@ -24,7 +24,7 @@ class ReservationController extends Controller {
 
     public function store(Request $request) {
         $validated = $request->validate([
-            'student_id' => ['required', 'integer', 'exists:students,id'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'menu_id' => ['required', 'integer', 'exists:menus,id'],
             'reservation_date' => ['required', 'date'],
@@ -38,13 +38,13 @@ class ReservationController extends Controller {
             ])]
         ]);
 
-        $existingReservation = Reservation::where('student_id', $validated['student_id'])
+        $existingReservation = Reservation::where('user_id', $validated['user_id'])
             ->where('reservation_date', $validated['reservation_date'])
             ->exists();
 
         if ($existingReservation) {
             return response()->json([
-                'message' => 'El estudiante ya tiene una reservación en esa fecha'
+                'message' => 'El usuario ya tiene una reservación en esa fecha'
             ], 422);
         }
 
@@ -98,7 +98,7 @@ class ReservationController extends Controller {
         return response()->json([
             'message' => 'Reservación creada correctamente',
             'data' => $reservation->load([
-                'student',
+                'user',
                 'shift',
                 'menu',
                 'payment',
@@ -109,7 +109,7 @@ class ReservationController extends Controller {
 
     public function show(string $id) {
         $reservation = Reservation::with([
-            'student',
+            'user',
             'shift',
             'menu',
             'payment',
@@ -123,7 +123,7 @@ class ReservationController extends Controller {
         $reservation = Reservation::with(['payment', 'consumptionLog'])->findOrFail($id);
 
         $validated = $request->validate([
-            'student_id' => ['required', 'integer', 'exists:students,id'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'menu_id' => ['required', 'integer', 'exists:menus,id'],
             'reservation_date' => ['required', 'date'],
@@ -147,14 +147,14 @@ class ReservationController extends Controller {
             ])]
         ]);
 
-        $existingReservation = Reservation::where('student_id', $validated['student_id'])
+        $existingReservation = Reservation::where('user_id', $validated['user_id'])
             ->where('reservation_date', $validated['reservation_date'])
             ->where('id', '!=', $reservation->id)
             ->exists();
 
         if ($existingReservation) {
             return response()->json([
-                'message' => 'El estudiante ya tiene una reservación en esa fecha'
+                'message' => 'El usuario ya tiene una reservación en esa fecha'
             ], 422);
         }
 
@@ -259,7 +259,7 @@ class ReservationController extends Controller {
         return response()->json([
             'message' => 'Reservación actualizada correctamente',
             'data' => $reservation->fresh()->load([
-                'student',
+                'user',
                 'shift',
                 'menu',
                 'payment',

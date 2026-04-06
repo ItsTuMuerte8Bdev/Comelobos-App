@@ -12,7 +12,7 @@ class PaymentController extends Controller {
     public function index() {
         $payments = Payment::with([
             'reservation',
-            'reservation.student',
+            'reservation.user',
             'reservation.shift',
             'reservation.menu'
         ])->get();
@@ -94,7 +94,7 @@ class PaymentController extends Controller {
             'message' => 'Pago creado correctamente',
             'data' => $payment->load([
                 'reservation',
-                'reservation.student',
+                'reservation.user',
                 'reservation.shift',
                 'reservation.menu'
             ])
@@ -104,7 +104,7 @@ class PaymentController extends Controller {
     public function show(string $id) {
         $payment = Payment::with([
             'reservation',
-            'reservation.student',
+            'reservation.user',
             'reservation.shift',
             'reservation.menu'
         ])->findOrFail($id);
@@ -209,7 +209,7 @@ class PaymentController extends Controller {
             'message' => 'Pago actualizado correctamente',
             'data' => $payment->fresh()->load([
                 'reservation',
-                'reservation.student',
+                'reservation.user',
                 'reservation.shift',
                 'reservation.menu'
             ])

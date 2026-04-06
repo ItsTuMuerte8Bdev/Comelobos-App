@@ -5,23 +5,22 @@ namespace Database\Seeders;
 use App\Models\Menu;
 use App\Models\Reservation;
 use App\Models\Shift;
-use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ReservationSeeder extends Seeder {
-
     public function run(): void {
-        $student = Student::first();
+        $user = User::where('role', 'student')->first();
         $shift = Shift::first();
         $menu = Menu::first();
 
-        if (!$student || !$shift || !$menu) {
+        if (!$user || !$shift || !$menu) {
             return;
         }
 
         Reservation::updateOrCreate(
             [
-                'student_id' => $student->id,
+                'user_id' => $user->id,
                 'reservation_date' => now()->toDateString(),
             ],
             [
@@ -33,5 +32,4 @@ class ReservationSeeder extends Seeder {
             ]
         );
     }
-
 }

@@ -12,10 +12,10 @@ class ConsumptionLogController extends Controller {
     public function index() {
         $consumptionLogs = ConsumptionLog::with([
             'reservation',
-            'student',
             'shift',
             'validator',
-            'reservation.menu'
+            'reservation.menu',
+            'reservation.user'
         ])->get();
 
         return response()->json($consumptionLogs);
@@ -29,7 +29,6 @@ class ConsumptionLogController extends Controller {
                 'exists:reservations,id',
                 'unique:consumption_logs,reservation_id'
             ],
-            'student_id' => ['required', 'integer', 'exists:students,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'validated_by' => ['nullable', 'integer', 'exists:users,id'],
             'checked_in_at' => ['required', 'date'],
@@ -44,12 +43,6 @@ class ConsumptionLogController extends Controller {
         if ($reservation->consumptionLog) {
             return response()->json([
                 'message' => 'La reservación ya tiene un consumo registrado'
-            ], 422);
-        }
-
-        if ((int) $reservation->student_id !== (int) $validated['student_id']) {
-            return response()->json([
-                'message' => 'El student_id no coincide con la reservación'
             ], 422);
         }
 
@@ -97,10 +90,10 @@ class ConsumptionLogController extends Controller {
             'message' => 'Consumo registrado correctamente',
             'data' => $consumptionLog->load([
                 'reservation',
-                'student',
                 'shift',
                 'validator',
-                'reservation.menu'
+                'reservation.menu',
+                'reservation.user'
             ])
         ], 201);
     }
@@ -108,10 +101,10 @@ class ConsumptionLogController extends Controller {
     public function show(string $id) {
         $consumptionLog = ConsumptionLog::with([
             'reservation',
-            'student',
             'shift',
             'validator',
-            'reservation.menu'
+            'reservation.menu',
+            'reservation.user'
         ])->findOrFail($id);
 
         return response()->json($consumptionLog);
@@ -130,7 +123,6 @@ class ConsumptionLogController extends Controller {
                 'exists:reservations,id',
                 Rule::unique('consumption_logs', 'reservation_id')->ignore($consumptionLog->id)
             ],
-            'student_id' => ['required', 'integer', 'exists:students,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'validated_by' => ['nullable', 'integer', 'exists:users,id'],
             'checked_in_at' => ['required', 'date'],
@@ -145,12 +137,6 @@ class ConsumptionLogController extends Controller {
         if ((int) $newReservation->id !== (int) $consumptionLog->reservation_id && $newReservation->consumptionLog) {
             return response()->json([
                 'message' => 'La nueva reservación ya tiene un consumo registrado'
-            ], 422);
-        }
-
-        if ((int) $newReservation->student_id !== (int) $validated['student_id']) {
-            return response()->json([
-                'message' => 'El student_id no coincide con la reservación'
             ], 422);
         }
 
@@ -192,10 +178,10 @@ class ConsumptionLogController extends Controller {
             'message' => 'Registro de consumo actualizado correctamente',
             'data' => $consumptionLog->fresh()->load([
                 'reservation',
-                'student',
                 'shift',
                 'validator',
-                'reservation.menu'
+                'reservation.menu',
+                'reservation.user'
             ])
         ]);
     }
