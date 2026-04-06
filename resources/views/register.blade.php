@@ -42,7 +42,7 @@
             margin: 12px 0 6px; /* Margen */
             color: #222; /* Color del texto */
         }
-        input[type="text"], input[type="email"], input[type="tel"] { /* Inputs de Texto */
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"] { /* Inputs de Texto */
             width: 100%; /* Ancho */
             padding: 12px; /* Relleno interno */
             border-radius: 8px; /* Radio del borde */
@@ -77,26 +77,26 @@
             {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
 
-            <label for="nombre">Nombre</label>
-            <input id="nombre" name="nombre" type="text" placeholder="Nombre">
+            <label for="student_code">Matrícula</label>
+            <input id="student_code" name="student_code" type="text" placeholder="Matrícula">
 
-            <label for="apellidos">Apellidos</label>
-            <input id="apellidos" name="apellidos" type="text" placeholder="Apellidos">
+            <label for="first_name">Nombre(s)</label>
+            <input id="first_name" name="first_name" type="text" placeholder="Nombre(s)">
+
+            <label for="last_name">Apellido Paterno</label>
+            <input id="last_name" name="last_name" type="text" placeholder="Apellido Paterno">
+
+            <label for="second_last_name">Apellido Materno</label>
+            <input id="second_last_name" name="second_last_name" type="text" placeholder="Apellido Materno">
+
+            <label for="phone">Teléfono</label>
+            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567">
 
             <label for="email">Email</label>
             <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
 
-            <label for="telefono">Teléfono</label>
-            <input id="telefono" name="telefono" type="tel" placeholder="(555) 123-4567">
-
-            <label for="escuela">Escuela, Facultad o Dependencia</label>
-            <input id="escuela" name="escuela" type="text" placeholder="Ej. Facultad de Ciencias">
-
-            <label for="matricula">ID o Matrícula</label>
-            <input id="matricula" name="matricula" type="text" placeholder="ID o matrícula">
-
-            <label for="puesto">Puesto</label>
-            <input id="puesto" name="puesto" type="text" placeholder="Puesto (opcional)">
+            <label for="password">Contraseña</label>
+            <input id="password" name="password" type="password" placeholder="Contraseña">
 
             <button class="btn" type="submit">Registrarse</button>
         </form>
