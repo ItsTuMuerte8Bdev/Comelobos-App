@@ -4,18 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>COMELOBOS - Bienvenida</title>
-  <link rel="stylesheet" href="<?php echo asset('css/index.css'); ?>">
-  <style>
-    /* Ensure full-bleed white on splash */
-    body.welcome-root{margin:0}
-  </style>
+  <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+  <!-- estilos movidos a app.css -->
 </head>
 <body class="welcome-root">
   <div class="splash" role="presentation">
     <div class="logo">COMELOBOS</div>
     <div class="overlay" aria-hidden="true"></div>
     <!-- combined contiene el texto final y se expande desde el centro hacia los lados -->
-    <div class="combined">COMELOBOS <span style="opacity:.9">|</span> BUAP</div>
+    <div class="combined">COMELOBOS <span class="sep">|</span> BUAP</div>
   </div>
 
   <script>

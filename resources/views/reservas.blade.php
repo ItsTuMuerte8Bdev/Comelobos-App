@@ -8,17 +8,17 @@
 
         <!-- Bootstrap Icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div class="device" role="application">
-            <main class="hero" style="background:transparent;color:#053f56;padding:1.25rem 1rem">
-                <div style="width:100%">
-                    <h2 style="margin:0 0 .25rem;font-size:1.1rem">Reservas</h2>
+            <main class="hero hero--sm">
+                <div class="header-inner">
+                    <h2 class="page-title">Reservas</h2>
                 </div>
             </main>
 
-            <section class="px-3 py-3" style="flex:1 1 auto;">
+            <section class="px-3 py-3 flex-auto">
                 <div class="reservas-card">
                     <div class="tabs text-center mb-4">
                         <button id="tab-activas" class="tab active">Activas</button>
@@ -45,14 +45,7 @@
             @include('partials.navbar', ['activeTab' => 'reservas'])
         </div>
 
-        <style>
-            .reservas-card{max-width:520px;margin:18px auto;padding:18px;background:#fff;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-            .tabs .tab{border:none;background:transparent;padding:.4rem .8rem;border-radius:20px;margin:0 .25rem;color:#053f56}
-            .tabs .tab.active{background:#054e61;color:#fff}
-            .empty-state svg{opacity:.95}
-            .btn-reservar{background:#3fc0ff;border-color:#3fc0ff;color:#fff}
-            .d-none{display:none}
-        </style>
+        <!-- estilos movidos a app.css -->
 
         <script>
             // Muestra modal de éxito si viene ?success=1
@@ -61,11 +54,11 @@
                 if(qs('success')==='1'){
                     const modal = document.createElement('div')
                     modal.innerHTML = `
-                        <div class="modal-backdrop" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:9999">
-                            <div style="background:#fff;padding:18px;border-radius:8px;max-width:420px;text-align:center;">
+                        <div class="modal-overlay">
+                            <div class="confirm-box">
                                 <h5>Reserva confirmada</h5>
                                 <p>Tu reserva se realizó correctamente.</p>
-                                <button id="aceptar-success" style="background:#1bb86a;border:none;color:#fff;padding:.5rem 1rem;border-radius:6px">Aceptar</button>
+                                <button id="aceptar-success" class="btn-confirm">Aceptar</button>
                             </div>
                         </div>`;
                     document.body.appendChild(modal)

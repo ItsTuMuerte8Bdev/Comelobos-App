@@ -6,17 +6,17 @@
         <title>Comelobos | Menú</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div class="device" role="application">
-            <main class="hero" style="background:transparent;color:#053f56;padding:1.25rem 1rem">
-                <div style="width:100%">
-                    <h2 style="margin:0 0 .25rem;font-size:1.1rem">Menú</h2>
+            <main class="hero hero--sm">
+                <div class="header-inner">
+                    <h2 class="page-title">Menú</h2>
                 </div>
             </main>
 
-            <section class="px-3 py-3" style="flex:1 1 auto;">
+            <section class="px-3 py-3 flex-auto">
                 <div class="menu-list">
                     <h6 class="text-danger">Desayuno del día (De 9:00 a 13:00)</h6>
                     <div class="menu-card d-flex align-items-center mb-4">

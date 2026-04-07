@@ -8,16 +8,16 @@
 
         <!-- Bootstrap Icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div class="device" role="application">
-            <main class="hero" style="background:transparent;color:#053f56;padding:1.25rem 1rem">
-                <div style="width:100%">
-                    <h2 style="margin:0 0 .25rem;font-size:1.1rem">Check-In</h2>
+            <main class="hero hero--sm">
+                <div class="header-inner">
+                    <h2 class="page-title">Check-In</h2>
                 </div>
             </main>
-            <section class="px-3 py-3" style="flex:1 1 auto;">
+            <section class="px-3 py-3 flex-auto">
                 <div class="reservas-card text-center">
                     <svg width="160" height="160" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 2v12" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

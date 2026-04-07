@@ -8,18 +8,18 @@
 
         <!-- Bootstrap Icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div class="device" role="application">
-            <main class="hero" style="background:transparent;color:#053f56;padding:1.25rem 1rem">
-                <div style="display:flex;align-items:center;gap:.75rem">
-                    <a href="{{ url('/reservas') }}" class="back-btn" style="background:#3fc0ff;padding:.4rem .55rem;border-radius:8px;color:#fff;text-decoration:none">←</a>
-                    <h2 style="margin:0;font-size:1.1rem">Reservas</h2>
+            <main class="hero hero--sm">
+                <div class="header-inner">
+                    <a href="{{ url('/reservas') }}" class="back-btn back-btn--blue">←</a>
+                    <h2 class="page-title">Reservas</h2>
                 </div>
             </main>
 
-            <section class="px-3 py-3" style="flex:1 1 auto;">
+            <section class="px-3 py-3 flex-auto">
                 <div class="reservar-card">
                     <label class="form-label">Tipo de comida</label>
                     <select id="tipo" class="form-select mb-3">
@@ -43,7 +43,7 @@
                     <div class="menu-card mb-3">
                         <strong>Desayuno del día (De 9:00 a 13:00)</strong>
                         <div class="d-flex align-items-center mt-2">
-                            <img src="https://via.placeholder.com/90x60" alt="img" style="border-radius:4px;margin-right:.6rem;border:1px solid #eee">
+                            <img src="https://via.placeholder.com/90x60" alt="img" class="thumb-rounded">
                             <div>
                                 <div>Huevos a la mexicana con porción de fruta y jugo</div>
                             </div>
@@ -53,7 +53,7 @@
                     <div class="menu-card mb-3">
                         <strong>Comida del día (De 13:00 a 17:00)</strong>
                         <div class="d-flex align-items-center mt-2">
-                            <img src="https://via.placeholder.com/90x60" alt="img" style="border-radius:4px;margin-right:.6rem;border:1px solid #eee">
+                            <img src="https://via.placeholder.com/90x60" alt="img" class="thumb-rounded">
                             <div>
                                 <div>Sopa de fideos con pollo en salsa verde y agua de sabor</div>
                             </div>
@@ -72,29 +72,17 @@
         </div>
 
         <!-- Confirm modal (dinámico dentro de esta vista) -->
-        <div id="confirm-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:9999">
-            <div style="background:#fff;padding:18px;border-radius:8px;max-width:420px;margin:0 auto;text-align:center;">
+        <div id="confirm-modal" class="modal-overlay">
+            <div class="confirm-box">
                 <p id="confirm-text">¿Confirmar reserva? <br><small class="text-muted">Costo: <span id="costo">35</span></small></p>
-                <div style="display:flex;gap:.6rem;justify-content:center;margin-top:12px">
-                    <button id="btn-cancel" style="background:#e74c3c;border:none;color:#fff;padding:.45rem .9rem;border-radius:6px">Cancelar</button>
-                    <button id="btn-confirm" style="background:#1bb86a;border:none;color:#fff;padding:.45rem .9rem;border-radius:6px">Confirmar</button>
+                <div class="confirm-actions">
+                    <button id="btn-cancel" class="btn-cancel">Cancelar</button>
+                    <button id="btn-confirm" class="btn-confirm">Confirmar</button>
                 </div>
             </div>
         </div>
 
-        <style>
-            .reservar-card{max-width:520px;margin:18px auto;padding:18px;background:#fff;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-            .horario{margin:.25rem .25rem .25rem 0;border-radius:20px;background:#eee;border:1px solid #ddd;padding:.35rem .75rem}
-            .horario.active{background:#054e61;color:#fff}
-            .menu-card{border:1px solid #eee;padding:.6rem;border-radius:6px}
-            .btn-reservar{background:#3fc0ff;border-color:#3fc0ff;color:#fff}
-            .creditos-box{border:1px solid #ccc;padding:.5rem;text-align:center;border-radius:4px}
-
-            /* animación de puntos */
-            .loader{display:flex;gap:.4rem;align-items:center;justify-content:center}
-            .dot{width:12px;height:12px;border-radius:50%;background:#054e61;opacity:0}
-            .dot.show{opacity:1}
-        </style>
+        <!-- estilos movidos a app.css -->
 
         <script>
             // manejo selección horarios
@@ -111,7 +99,7 @@
                 // replace contenido por animación
                 const container = document.querySelector('.reservar-card')
                 container.innerHTML = `
-                    <div style="text-align:center;padding:40px 10px">
+                    <div class="confirm-inner">
                         <svg width="160" height="160" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v2a2 2 0 0 1-2 2H4v12h16V6h-2a2 2 0 0 1-2-2V2H8z" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         <h4 class="mt-3">Reservando...</h4>
                         <div class="loader mt-3" id="loader-dots">

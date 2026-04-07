@@ -17,7 +17,7 @@
                 @php $isActive = ($activeTab === $it['key']); @endphp
                 <li class="nav-item text-center w-100">
                     <a class="nav-link {{ $isActive ? 'active text-dark d-flex flex-column align-items-center' : 'text-dark d-flex flex-column align-items-center' }}" href="{{ $it['href'] }}" {!! $isActive ? 'aria-current="page"' : '' !!}>
-                        <i class="bi {{ $it['icon'] }}" style="font-size:1.5rem"></i>
+                        <i class="bi {{ $it['icon'] }} nav-icon"></i>
                         <span class="nav-label">{{ $it['label'] }}</span>
                     </a>
                 </li>

@@ -6,16 +6,11 @@
         <title>Comelobos | Ajustes</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/index.css') }}" rel="stylesheet">
-        <style>
-            .back-btn{background:#48b8e6;color:white;border-radius:10px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;margin-right:auto}
-            .settings-link{display:block;margin:16px 0;color:#28d1d8;font-weight:600;text-decoration:none}
-            .note{margin-top:40px;text-align:center;color:var(--color-muted)}
-        </style>
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div class="device" role="application">
-            <main style="padding-top: 16px !important;" class="hero app-header">
+            <main class="hero app-header">
                 <div class="header-inner">
                     <a href="/account" class="back-btn"><i class="bi bi-arrow-left"></i></a>
                     <h2>Ajustes</h2>
@@ -23,7 +18,7 @@
             </main>
 
             <section class="px-3 py-3 content-section">
-                <div style="padding:8px 12px">
+                <div class="padded">
                     <a href="#" class="settings-link" id="tycLink">Terminos y condiciones</a>
                     <a href="#" class="settings-link" id="policyLink">Política de privacidad</a>
                 </div>
