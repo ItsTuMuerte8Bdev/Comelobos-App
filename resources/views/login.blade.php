@@ -16,7 +16,7 @@
     <div class="brand">COMELOBOS</div>
     <div class="card">
         {{-- Formulario para enviar el email del usuario para el proceso de login --}}
-        <form method="POST" action="/login/password">
+        <form method="POST" action="{{ route('password') }}">
             {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
             <label for="email">Email</label>
@@ -25,11 +25,17 @@
                 <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
             </div>
 
+            @error('email')
+                <div style="color: red; margin-bottom: 15px; font-weight: bold; text-align: center;">
+                    {{ $message }}
+                </div>
+            @enderror
+
             <button class="btn" type="submit">Continuar</button>
         </form>
 
         <div class="muted">Si continúas, aceptas nuestra Política de Privacidad y Términos y Condiciones</div>
-        <div class="small">¿No tienes una cuenta? <a href="/register">Regístrate</a></div>
+        <div class="small">¿No tienes una cuenta? <a href="{{ route('registrarse') }}">Regístrate</a></div>
     </div>
 </div>
 </body>

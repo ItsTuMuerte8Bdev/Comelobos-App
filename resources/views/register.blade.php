@@ -73,20 +73,20 @@
 
     <div class="card">
         {{-- Formulario para registrar nuevos usuarios --}}
-        <form method="POST" action="/register">
+        <form method="POST" action="{{ route('autenticarRegistro') }}">
             {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
 
-            <label for="student_code">Matrícula</label>
-            <input id="student_code" name="student_code" type="text" placeholder="Matrícula">
+            <label for="matriculation_number">Matrícula</label>
+            <input id="matriculation_number" name="matriculation_number" type="text" placeholder="Matrícula">
 
             <label for="first_name">Nombre(s)</label>
             <input id="first_name" name="first_name" type="text" placeholder="Nombre(s)">
 
-            <label for="last_name">Apellido Paterno</label>
+            <label for="last_name">Primer Apellido (Apellido Paterno)</label>
             <input id="last_name" name="last_name" type="text" placeholder="Apellido Paterno">
 
-            <label for="second_last_name">Apellido Materno</label>
+            <label for="second_last_name">Segundo Apellido (Apellido Materno)</label>
             <input id="second_last_name" name="second_last_name" type="text" placeholder="Apellido Materno">
 
             <label for="phone">Teléfono</label>

@@ -11,11 +11,11 @@
 <body>
 <div class="wrap">
     {{-- Enlace para retroceder a la pantalla de email --}}
-    <a href="/login" class="link-back">‹ Atrás</a>
+    <a href="{{ route('login') }}" class="link-back">‹ Atrás</a>
     <div class="brand">COMELOBOS</div>
     <div class="card">
         {{-- Formulario para autenticar el usuario con su contraseña --}}
-        <form method="POST" action="{{ route('login.attempt') }}">
+        <form method="POST" action="{{ route('autenticarLogin') }}">
             {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
 
@@ -32,7 +32,7 @@
         </form>
 
         <div class="muted">¿Has olvidado tu contraseña?</div>
-        <div class="small">¿No tienes una cuenta? <a href="/register">Regístrate</a></div>
+        <div class="small">¿No tienes una cuenta? <a href="{{ route('registrarse') }}">Regístrate</a></div>
     </div>
 </div>
 </body>

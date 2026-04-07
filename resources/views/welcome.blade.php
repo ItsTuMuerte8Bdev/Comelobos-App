@@ -1,4 +1,7 @@
 <!doctype html>
+
+{{-- Bienvenida --}}
+
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -17,7 +20,7 @@
 
   <script>
     // Redirige a la pantalla principal una vez completada la animación (5s)
-    setTimeout(function(){ window.location.href = "<?php echo url('/index'); ?>"; }, 5000);
+    setTimeout(function(){ window.location.href = "{{ route('login') }}"; }, 5000);
   </script>
 </body>
 </html>

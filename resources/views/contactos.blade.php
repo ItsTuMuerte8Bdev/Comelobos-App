@@ -12,7 +12,7 @@
         <div class="device" role="application">
             <main class="hero app-header">
                 <div class="header-inner">
-                    <a href="/account" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+                    <a href="{{ route('cuenta') }}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
                     <h2>Contactos</h2>
                 </div>
             </main>

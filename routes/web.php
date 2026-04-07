@@ -1,9 +1,12 @@
 <?php
 
-use App\Http\Controllers\PageController; // Logica
-use App\Http\Controllers\AuthController; // Autenticador
-use Illuminate\Support\Facades\Route; // Direccionador
-use Illuminate\Http\Request; // Lectura de datos
+use App\Models\User;
+use App\Http\Controllers\AutenticarController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Interfaz 1: Bienvenida
 Route::get('/', function () {
@@ -19,20 +22,20 @@ Route::middleware('guest')->group(function () {
     })->name('login');
 
     // Interfaz 2.2: Contraseña
-    Route::post('/login/password', function (Request $request) {
+    Route::post('/password', function (Request $request) {
         return view('login_password', ['email' => $request->input('email')]);
-    })->name('login.password');
+    })->name('password');
 
     // 2.3: Verifica Credenciales
-    Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
+    Route::post('/autenticarLogin', [AutenticarController::class, 'login'])->name('autenticarLogin');
 
     // Interfaz 2.4: Registrarse
-    Route::get('/register', function () {
+    Route::get('/registro', function () {
         return view('register');
-    })->name('register');
+    })->name('registrarse');
 
     // Interfaz 2.5: Procesar Registro
-    Route::post('/register', [AuthController::class, 'register'])->name('register.attempt');
+    Route::post('/autenticarRegistro', [AutenticarController::class, 'register'])->name('autenticarRegistro');
 
 });
 
@@ -40,41 +43,41 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     // Interfaz 3.1: Pagina Principal
-    Route::get('/index', [PageController::class, 'index'])->name('index');
+    Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 
     // Rutas que devuelven vistas directamente para el usuario autenticado.
-    Route::get('/account', function () {
+    Route::get('/cuenta', function () {
         return view('account');
-    })->name('account');
+    })->name('cuenta');
 
     Route::get('/informacion', function () {
         return view('informacion');
-    });
+    })->name('informacion');
 
     Route::get('/contactos', function () {
         return view('contactos');
-    });
+    })->name('contactos');
 
     Route::get('/ajustes', function () {
         return view('ajustes');
-    });
+    })->name('ajustes');
 
     Route::get('/menu', function () {
         return view('menu');
-    });
+    })->name('menu');
 
     Route::get('/reservas', function () {
         return view('reservas');
-    });
+    })->name('reservas');
 
     Route::get('/checkin', function () {
         return view('checkin');
-    });
+    })->name('checkin');
 
     Route::get('/reservar', function () {
         return view('reservar');
-    });
+    })->name('reservar');
 
-    // Logout mediante AuthController. Cierra sesión y redirige.
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Logout mediante AutenticarController. Cierra sesión y redirige.
+    Route::post('/login', [AutenticarController::class, 'logout'])->name('logout');
 });

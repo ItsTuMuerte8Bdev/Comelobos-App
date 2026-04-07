@@ -11,28 +11,27 @@ class UserSeeder extends Seeder {
         User::updateOrCreate(
             ['email' => 'admin@comelobos.test'],
             [
-                'matriculation_number' => 'ADMIN001',
-                'first_name' => 'System',
-                'last_name' => 'Admin',
-                'second_last_name' => 'Principal',
+                'matriculation_number' => '202300001',
+                'first_name' => 'Administrador',
+                'last_name' => 'Principal',
+                'second_last_name' => 'Del Sistema',
                 'phone' => '2221000001',
                 'password' => Hash::make('password123'),
-                'role' => 'administrative',
-                'is_active' => true,
+                'role' => 'administrativo',
             ]
         );
 
         User::updateOrCreate(
-            ['email' => 'student@comelobos.test'],
+            ['email' => 'cliente@comelobos.test'],
             [
-                'matriculation_number' => '202320912',
-                'first_name' => 'Alfonso Arnulfo',
-                'last_name' => 'Cuevas',
-                'second_last_name' => 'Reynoso',
+                'matriculation_number' => '202300002',
+                'first_name' => 'Pedro Ramón',
+                'last_name' => 'Gómez',
+                'second_last_name' => 'Bonilla',
                 'phone' => '2227543576',
                 'password' => Hash::make('password123'),
-                'role' => 'student',
-                'is_active' => true,
+                'role' => 'cliente',
+
             ]
         );
     }
