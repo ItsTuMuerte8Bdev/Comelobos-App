@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import url('../../public/css/palette.css');
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -44,7 +45,9 @@
 
 /* Login/password specific styles (moved aquí) */
 :root{--primary:#113b78;--accent:#e22b20;--input-bg:#eef1f3}
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial;margin:0;background:#fff}
+/* No sobrescribir layout global (mantener body centrado desde index.css)
+    Solo definir la familia de fuentes para coherencia */
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial}
 .wrap{max-width:500px;margin:50px auto;padding:20px}
 .brand{color:var(--primary);text-align:center;font-weight:700;font-size:44px;margin:22px 0}
 .card{background:#fff;padding:20px;border-radius:10px}
@@ -93,4 +96,28 @@ label{display:block;margin:10px 0 6px;color:#222}
 /* Welcome */
 .welcome-root{margin:0}
 .sep{opacity:.9}
+
+/* Responsive: mobile-first (device card centered). On large screens adapt to wider layout */
+@media (min-width: 992px){
+    /* Make the device expand more on desktops while keeping max width */
+    .device{
+        width:calc(100% - 80px) !important;
+        max-width:1200px;
+        height:calc(96vh);
+        margin:18px auto;
+        border-radius:12px;
+    }
+
+    /* Hero: use larger padding and left-aligned content on wide screens */
+    .hero{padding:3rem 2rem;align-items:flex-start;justify-content:flex-start;text-align:left}
+    .hero h1, .hero h2{text-align:left}
+
+    /* Navbar: distribute items horizontally across the device width */
+    .navbar{height:72px;border-top:1px solid rgba(0,0,0,.04)}
+    .navbar .container-fluid{justify-content:center}
+    .navbar-nav{width:100%;max-width:980px;margin:0 auto;display:flex;flex-direction:row;justify-content:space-between}
+    .navbar .nav-link{flex-direction:row;gap:.5rem;padding:.6rem 1rem;border-radius:8px}
+    .nav-label{margin-top:0;margin-left:8px;font-size:.95rem}
+    .navbar .nav-link i{transform:none}
+}
 
