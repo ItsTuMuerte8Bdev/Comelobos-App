@@ -11,7 +11,8 @@
         <!-- Bootstrap Icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Fallback sin Vite: usar archivos en public/ con asset() -->
+        <script src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body>
         <div class="device" role="application">
@@ -27,5 +28,6 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Si no has generado assets con Vite, `public/js/app.js` puede no existir (404 en navegador). -->
     </body>
 </html>
