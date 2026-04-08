@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-<div class="wrap">
+<div class="wrap auth-wide">
     {{-- Enlace para retroceder a la pantalla de email --}}
     <a href="{{ route('login') }}" class="link-back">‹ Atrás</a>
     <div class="brand">COMELOBOS</div>

@@ -43,15 +43,17 @@
             color: #222; /* Color del texto */
         }
         input[type="text"], input[type="email"], input[type="tel"], input[type="password"] { /* Inputs de Texto */
+            box-sizing: border-box;
             width: 100%; /* Ancho */
             padding: 12px; /* Relleno interno */
             border-radius: 8px; /* Radio del borde */
             background: var(--input-bg); /* Color de fondo */
             border: 1px solid #e6e9eb; /* Borde */
+            max-width: 100%;
         }
         .btn { /* Botón de Registrarse */
             display: block; /* Tipo de display */
-            width: 105%; /* Ancho */
+            width: 100%; /* Ancho */
             padding: 14px; /* Relleno interno */
             background: var(--accent); /* Color de fondo */
             color: #fff; /* Color del texto */
@@ -59,6 +61,7 @@
             border-radius: 6px; /* Radio del borde */
             font-weight: 600; /* Peso de la fuente */
             margin-top: 18px; /* Margen superior */
+            box-sizing: border-box;
         }
         .muted { /* Texto Desapercibido */
             color: #777; /* Color del texto */
@@ -69,6 +72,7 @@
 </head>
 <body>
 <div class="wrap">
+    <a href="{{ route('login') }}" class="link-back">‹ Atrás</a>
     <div class="brand">COMELOBOS</div>
 
     <div class="card">

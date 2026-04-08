@@ -25,17 +25,18 @@ body{background:var(--color-bg);display:flex;align-items:center;justify-content:
 /* Splash / Welcome */
 .welcome-root{background:var(--color-surface);min-height:100vh;display:flex;align-items:center;justify-content:center}
 .splash{display:block;position:relative;min-height:100vh;padding:20px}
-.splash .logo{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:4rem; color:var(--color-primary-variant); opacity:0; transform:translate(-50%,-50%) scale(.98); animation:logoSequence 2.5s forwards; letter-spacing:1px; position:absolute; left:50%; top:50%; z-index:3; white-space:nowrap}
-.splash .combined{position:absolute; left:50%; top:50%; transform-origin:center; transform:translate(-50%,-50%) scaleX(0); z-index:4; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:4rem; color:var(--color-primary-variant); animation:combinedExpand 2.5s 2.5s forwards; white-space:nowrap; opacity:0}
+.splash .logo{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:clamp(2rem,8vw,4rem); color:var(--color-primary-variant); opacity:0; transform:translate(-50%,-50%) scale(.98); animation:logoSequence 2.5s forwards; letter-spacing:1px; position:absolute; left:50%; top:50%; z-index:3; white-space:nowrap}
+.splash .combined{position:absolute; left:50%; top:50%; transform-origin:center; transform:translate(-50%,-50%) scaleX(0); z-index:4; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:clamp(1.6rem,6.5vw,4rem); color:var(--color-primary-variant); animation:combinedExpand 2.5s 2.5s forwards; white-space:nowrap; opacity:0}
 .splash .overlay{position:fixed; inset:0; background:var(--color-primary); opacity:0; pointer-events:none; z-index:2; animation:overlayFade 2.5s 2.5s forwards}
 
-@keyframes logoSequence{0%{opacity:0; transform:translate(-50%,-50%) scale(.96); color:var(--color-muted-2)}30%{opacity:1; transform:translate(-50%,-50%) scale(1)}85%{opacity:1; transform:translate(-50%,-50%) scale(1)}100%{opacity:0; transform:translate(-50%,-50%) scale(1)}}
+/* Mantener el logo visible al finalizar la animación (no desaparecer) */
+@keyframes logoSequence{0%{opacity:0; transform:translate(-50%,-50%) scale(.96); color:var(--color-muted-2)}30%{opacity:1; transform:translate(-50%,-50%) scale(1)}85%{opacity:1; transform:translate(-50%,-50%) scale(1)}100%{opacity:1; transform:translate(-50%,-50%) scale(1)}}
 
 @keyframes combinedExpand{0%{transform:translate(-50%,-50%) scaleX(0); color:var(--color-primary-variant); opacity:0}30%{transform:translate(-50%,-50%) scaleX(0.6); color:var(--color-primary-variant); opacity:1}55%{transform:translate(-50%,-50%) scaleX(1.05); color:var(--color-primary-contrast); opacity:1}80%{transform:translate(-50%,-50%) scaleX(.98); color:var(--color-primary-contrast); opacity:1}100%{transform:translate(-50%,-50%) scaleX(1); color:var(--color-primary-contrast); opacity:1}}
 
 @keyframes overlayFade{0%{opacity:0}100%{opacity:1}}
 
-@media (max-width:420px){.splash .logo{font-size:3rem}.splash .combined{font-size:2.2rem}}
+@media (max-width:420px){.splash .logo{font-size:clamp(1.6rem,8.5vw,3rem)}.splash .combined{font-size:clamp(1.4rem,6.5vw,2.2rem)}}
 
 html,body{height:100%}
 
@@ -48,6 +49,25 @@ html,body{height:100%}
 .menu-text{flex:1;color:var(--color-text);padding-right:8px}
 
 @media (max-width:420px){.menu-thumb{width:72px;height:56px}}
+
+/* Admin-specific device: make hero fill almost all height and hide internal scroll */
+.admin-device{height:100vh !important; overflow:hidden !important}
+/* Make content-section fill device and allow hero inside it to occupy space */
+.admin-device .content-section{height:calc(100vh - 72px); padding:0; display:flex; flex-direction:column}
+.admin-device .content-section .home-hero{flex:1; min-height:60vh}
+/* Admin override: don't let .hero force a full-height header; keep it compact */
+.admin-device .content-section .hero:not(.home-hero){height:auto; min-height:0; padding:0.5rem 1rem; display:flex; align-items:flex-start; justify-content:flex-start}
+.admin-device .content-section .hero .header-inner{width:100%; display:flex; align-items:center; gap:12px}
+.admin-device .device > *{overflow:visible}
+
+/* Exception: admin home hero should keep a prominent height */
+.admin-device .content-section .home-hero{
+	min-height:60vh !important;
+	height:60vh !important;
+	display:flex !important;
+	align-items:center !important;
+	justify-content:center !important;
+}
 
 /* --- Fin del contenido integrado de index.css --- */
 
@@ -83,22 +103,76 @@ html,body{height:100%}
 .field a{color:#05bdb6;text-decoration:none;font-weight:600}
 .note{margin-top:16px;color:var(--color-muted)}
 
+/* Asegurar que los inputs deshabilitados sean legibles en la vista de información */
+.content-section .form-control[disabled],
+.content-section input[disabled]{
+	color: #222 !important;
+	opacity: 1 !important;
+	background-color: var(--input-bg) !important;
+	-webkit-text-fill-color: #222 !important;
+}
+
+/* Readonly field style used in admin forms (matches créditos look) */
+.readonly-field{
+    background: var(--input-bg) !important;
+    border: 1px solid #e6e9eb !important;
+    color: #222 !important;
+    opacity: 1 !important;
+}
+
 /* Login/password specific styles (moved aquí) */
 :root{--primary:#113b78;--accent:#e22b20;--input-bg:#eef1f3}
 /* No sobrescribir layout global (mantener body centrado desde index.css)
 	Solo definir la familia de fuentes para coherencia */
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial}
-.wrap{max-width:500px;margin:50px auto;padding:20px}
+.wrap{box-sizing:border-box;width:100%;max-width:500px;margin:30px auto;padding:20px}
 .brand{color:var(--primary);text-align:center;font-weight:700;font-size:44px;margin:22px 0}
 .card{background:#fff;padding:20px;border-radius:10px}
 label{display:block;margin:10px 0 6px;color:#222}
-.input{width:95%;padding:12px;border-radius:6px;background:var(--input-bg);border:1px solid #e6e9eb;display:flex;align-items:center}
+.input{box-sizing:border-box;width:100%;padding:12px;border-radius:6px;background:var(--input-bg);border:1px solid #e6e9eb;display:flex;align-items:center}
 .input .icon{margin-right:10px;color:#8a8f95}
-.input input{border:0;background:transparent;flex:1}
-.btn{display:block;width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:600;margin-top:18px}
+.input input{border:0;background:transparent;flex:1;width:100%;box-sizing:border-box}
+
+.card{box-sizing:border-box}
+.btn{display:block;width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-weight:600;margin-top:18px;box-shadow:0 6px 18px var(--color-primary-shadow)}
+
+/* Mantener botones de registro/login en rojo (específicos en vistas con clase .wrap) */
+.wrap .btn{background:var(--accent) !important}
 .muted{color:#777;text-align:center;margin-top:14px}
 .small{font-size:14px;color:#333;margin-top:18px;text-align:center}
 .link-back{color:#444;margin-bottom:12px;display:inline-block}
+
+/* Ajuste: bajar el bloque .wrap en vistas con link-back para que no quede tan pegado al top */
+.wrap .link-back{display:block;margin-top:6px;margin-bottom:12px}
+.wrap{margin:30px auto}
+
+@media (min-width: 768px){
+	.wrap{margin-top:70px}
+}
+
+/* Variante para vistas de autenticación que necesitan más ancho (ej. contraseña/admin) */
+.wrap.auth-wide{max-width:760px}
+.wrap.auth-wide .card{max-width:640px;margin:0 auto}
+
+/* En móviles, mantener el ancho contenido y evitar overflow */
+@media (max-width: 767px){
+	.wrap.auth-wide{max-width:95vw;padding:18px}
+	.wrap.auth-wide .card{max-width:100%}
+}
+
+/* Pantallas muy grandes: ampliar aún más el contenedor de autenticación */
+@media (min-width: 1200px) {
+	.wrap.auth-wide{max-width:1100px}
+	.wrap.auth-wide .card{max-width:980px}
+	.wrap.auth-wide .input{width:100%}
+	.wrap.auth-wide .input input{width:100%}
+}
+
+/* En pantallas pequeñas o de poca altura, no centrar verticalmente (evita ocultar el header) */
+@media (max-width: 767px), (max-height: 720px) {
+	body{align-items:flex-start}
+	.wrap{margin-top:24px}
+}
 
 /* Navbar icon size */
 .nav-icon{font-size:1.5rem}
@@ -160,3 +234,15 @@ label{display:block;margin:10px 0 6px;color:#222}
 	.nav-label{margin-top:0;margin-left:8px;font-size:.95rem}
 	.navbar .nav-link i{transform:none}
 }
+
+/* Forzar legibilidad del título en la cabecera (Información personal) */
+.app-header h2{
+	color: #053f56 !important;
+	opacity: 1 !important;
+	-webkit-text-fill-color: #053f56 !important;
+}
+
+/* Alineación y apilamiento del header/back button */
+.app-header .header-inner{display:flex;align-items:center;justify-content:center;position:relative}
+.app-header .back-btn{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:2}
+.app-header h2{position:relative;z-index:3;margin:0;padding-left:8px}

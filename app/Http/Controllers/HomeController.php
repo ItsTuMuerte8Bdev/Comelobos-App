@@ -14,7 +14,7 @@ class HomeController extends Controller
 
         // 2. Si el gafete dice 'administrativo', lo mandamos a su panel
         if ($user->role === 'administrativo') {
-            return view('admin.dashboard'); // Ajusta esta vista a como la haya nombrado Jovan
+            return view('admin.index');
         }
 
         // 3. Si el gafete dice 'cliente', lo mandamos a ver el menú y reservar

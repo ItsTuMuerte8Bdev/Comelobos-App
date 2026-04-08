@@ -29,7 +29,7 @@
                             <input type="text" class="form-control" value="" disabled>
                         </div>
                         <div class="field mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">Correo institucional</label>
                             <input type="email" class="form-control" value="" disabled>
                         </div>
                         <div class="field mb-3">
@@ -42,10 +42,6 @@
                         </div>
                         <div class="field mb-3">
                             <label class="form-label">ID o Matrícula</label>
-                            <input type="text" class="form-control" value="" disabled>
-                        </div>
-                        <div class="field mb-3">
-                            <label class="form-label">Puesto</label>
                             <input type="text" class="form-control" value="" disabled>
                         </div>
 

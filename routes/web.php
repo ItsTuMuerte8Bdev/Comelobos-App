@@ -78,6 +78,19 @@ Route::middleware('auth')->group(function () {
         return view('reservar');
     })->name('reservar');
 
+    /* Panel administrativo (básico) */
+    Route::prefix('admin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
+        Route::get('/menu', [\App\Http\Controllers\AdminController::class, 'menu'])->name('admin.menu');
+        Route::get('/creditos', [\App\Http\Controllers\AdminController::class, 'creditos'])->name('admin.creditos');
+        Route::get('/checkin', [\App\Http\Controllers\AdminController::class, 'checkin'])->name('admin.checkin');
+        Route::get('/cuenta', [\App\Http\Controllers\AdminController::class, 'cuenta'])->name('admin.cuenta');
+        Route::get('/cuenta/informacion', [\App\Http\Controllers\AdminController::class, 'cuentaInformacion'])->name('admin.cuenta.informacion');
+        Route::get('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'cuentaAjustes'])->name('admin.cuenta.ajustes');
+        Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'cuentaSeguridad'])->name('admin.cuenta.asignacion');
+        Route::get('/cuenta/reporte-movimientos', [\App\Http\Controllers\AdminController::class, 'reporteMovimientos'])->name('admin.cuenta.reporte');
+    });
+
     // Logout mediante AutenticarController. Cierra sesión y redirige.
     Route::post('/login', [AutenticarController::class, 'logout'])->name('logout');
 });
