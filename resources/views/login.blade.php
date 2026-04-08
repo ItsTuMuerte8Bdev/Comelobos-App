@@ -19,18 +19,18 @@
         <form method="POST" action="{{ route('password') }}">
             {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
             @csrf
-            <label for="email">Email</label>
+            <label for="email">Correo Institucional</label>
             <div class="input">
                 <span class="icon">✉️</span>
+                
                 <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
+                @error('email')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+
             </div>
-
-            @error('email')
-                <div style="color: red; margin-bottom: 15px; font-weight: bold; text-align: center;">
-                    {{ $message }}
-                </div>
-            @enderror
-
             <button class="btn" type="submit">Continuar</button>
         </form>
 

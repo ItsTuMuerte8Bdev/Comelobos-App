@@ -2,11 +2,11 @@
     $activeTab = $activeTab ?? 'home';
 
     $items = [
-        ['key' => 'home', 'label' => 'Inicio', 'icon' => 'bi-house', 'href' => url('/inicio')],
-        ['key' => 'reservas', 'label' => 'Reservas', 'icon' => 'bi-calendar2-event', 'href' => url('/reservas')],
-        ['key' => 'checkin', 'label' => 'Check-In', 'icon' => 'bi-qr-code', 'href' => url('/checkin')],
-        ['key' => 'menu', 'label' => 'Menú', 'icon' => 'bi-list', 'href' => url('/menu')],
-        ['key' => 'cuenta', 'label' => 'Cuenta', 'icon' => 'bi-person', 'href' => url('/cuenta')],
+        ['key' => 'home', 'label' => 'Inicio', 'icon' => 'bi-house', 'href' => route('inicio')],
+        ['key' => 'reservas', 'label' => 'Reservas', 'icon' => 'bi-calendar2-event', 'href' => route('reservas')],
+        ['key' => 'checkin', 'label' => 'Check-In', 'icon' => 'bi-qr-code', 'href' => route('checkin')],
+        ['key' => 'menu', 'label' => 'Menú', 'icon' => 'bi-list', 'href' => route('menu')],
+        ['key' => 'cuenta', 'label' => 'Cuenta', 'icon' => 'bi-person', 'href' => route('cuenta')],
     ];
 @endphp
 

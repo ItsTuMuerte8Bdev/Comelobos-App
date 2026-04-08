@@ -83,25 +83,60 @@
 
             <label for="matriculation_number">Matrícula</label>
             <input id="matriculation_number" name="matriculation_number" type="text" placeholder="Matrícula">
+                @error('matriculation_number')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
 
             <label for="first_name">Nombre(s)</label>
             <input id="first_name" name="first_name" type="text" placeholder="Nombre(s)">
-
+                @error('first_name')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+                
             <label for="last_name">Primer Apellido (Apellido Paterno)</label>
             <input id="last_name" name="last_name" type="text" placeholder="Apellido Paterno">
+                @error('last_name')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
 
             <label for="second_last_name">Segundo Apellido (Apellido Materno)</label>
             <input id="second_last_name" name="second_last_name" type="text" placeholder="Apellido Materno">
-
+                @error('second_last_name')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+ 
             <label for="phone">Teléfono</label>
             <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567">
-
-            <label for="email">Email</label>
+                @error('phone')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+ 
+            <label for="email">Correo Institucional</label>
             <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
-
+                @error('email')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+ 
             <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" placeholder="Contraseña">
-
+                @error('password')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                        {{ $message }}
+                    </div>
+                @enderror
+ 
             <button class="btn" type="submit">Registrarse</button>
         </form>
 
