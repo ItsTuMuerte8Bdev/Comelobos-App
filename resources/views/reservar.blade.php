@@ -30,7 +30,7 @@
 
                     <label class="form-label">Horario</label>
                     <p class="text-muted small">Nota: Si elige desayuno, solo se activan ciertos horarios.</p>
-                    <div id="horarios" class="mb-3 color-black">
+                    <div id="horarios" class="mb-3">
                         <button class="horario btn">8:00 - 9:00</button>
                         <button class="horario btn">9:00 - 10:00</button>
                         <button class="horario btn">10:00 - 11:00</button>

@@ -47,7 +47,37 @@
 
                         <p class="note">Nota: Debe rellenarse con la información de registro y no puede cambiar nada el usuario</p>
 
-                        <div class="d-flex justify-content-center gap-3 mt-4">
+                        {{-- Mensaje de éxito al cambiar contraseña --}}
+                        @if(session('success_password'))
+                            <div class="alert alert-success">{{ session('success_password') }}</div>
+                        @endif
+
+                        {{-- Formulario para cambiar contraseña --}}
+                        <form id="passwordForm" method="POST" action="{{ route('informacion.password.update') }}" class="mt-4">
+                            @csrf
+                            <div class="card p-3 mb-3">
+                                <h5>Cambiar contraseña</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña actual</label>
+                                    <input type="password" name="current_password" class="form-control" value="{{ old('current_password') }}">
+                                    @error('current_password') <div class="text-danger small">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Nueva contraseña</label>
+                                    <input type="password" name="password" class="form-control">
+                                    @error('password') <div class="text-danger small">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirmar nueva contraseña</label>
+                                    <input type="password" name="password_confirmation" class="form-control">
+                                </div>
+                                <div class="d-flex justify-content-center mt-2">
+                                    <button type="button" id="changePasswordBtn" class="btn btn-primary">Cambiar Contraseña</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="d-flex justify-content-center gap-3 mt-2">
                             <button type="button" id="saveBtn" class="btn btn-success">Guardar Cambios</button>
                             <button type="button" id="resetBtn" class="btn btn-danger">Anular cambios</button>
                         </div>
@@ -88,6 +118,20 @@
                     </div>
                 </div>
 
+                <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <p>¿Deseas cambiar tu contraseña?</p>
+                                <div class="d-flex justify-content-center gap-2 mt-3">
+                                    <button type="button" id="confirmChangePasswordBtn" class="btn btn-success">Confirmar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Regresar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script>
                         document.getElementById('saveBtn').addEventListener('click', function(){
                                 var modal = new bootstrap.Modal(document.getElementById('saveModal'));
@@ -96,6 +140,15 @@
                         document.getElementById('resetBtn').addEventListener('click', function(){
                                 var modal = new bootstrap.Modal(document.getElementById('resetModal'));
                                 modal.show();
+                        });
+                        document.getElementById('changePasswordBtn').addEventListener('click', function(){
+                            var modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+                            modal.show();
+                        });
+
+                        document.getElementById('confirmChangePasswordBtn').addEventListener('click', function(){
+                            // Enviar el formulario de cambio de contraseña
+                            document.getElementById('passwordForm').submit();
                         });
                 </script>
     </body>

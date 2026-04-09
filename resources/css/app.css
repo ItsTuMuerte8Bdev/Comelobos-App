@@ -68,8 +68,30 @@ label{display:block;margin:10px 0 6px;color:#222}
 
 /* Reservar view */
 .reservar-card{max-width:520px;margin:18px auto;padding:18px;background:#fff;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.horario{margin:.25rem .25rem .25rem 0;border-radius:20px;background:#eee;border:1px solid #ddd;padding:.35rem .75rem}
-.horario.active{background:#054e61;color:#fff}
+.reservar-card .horario.btn{
+    display:block;
+    width:100%;
+    margin:.35rem 0;
+    border-radius:22px;
+    padding:.6rem .75rem;
+    background: linear-gradient(180deg,#fff4e8 0%, #ffe1cc 100%) !important;
+    border:1px solid #ffd3a8;
+    color:#5a2b00 !important;
+    transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+    text-align:center;
+    font-weight:700;
+    font-size:.95rem;
+    line-height:1.2;
+    opacity:1 !important;
+}
+.reservar-card .horario.btn:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(255,140,38,0.12);background:linear-gradient(180deg,#ffe9d6 0%,#ffd6b8 100%) !important}
+.reservar-card .horario.btn.active,
+.reservar-card .horario.btn:active{
+    background:linear-gradient(90deg,#ff8a18 0%,#ff3d00 100%) !important;
+    color:#fff !important;
+    border-color:transparent;
+    box-shadow:0 12px 32px rgba(255,77,0,0.18);
+}
 .menu-card{border:1px solid #eee;padding:.6rem;border-radius:6px}
 .btn-reservar{background:#3fc0ff;border-color:#3fc0ff;color:#fff}
 .creditos-box{border:1px solid #ccc;padding:.5rem;text-align:center;border-radius:4px}
