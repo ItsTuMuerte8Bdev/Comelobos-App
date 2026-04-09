@@ -36,16 +36,46 @@
               <div class="card-header">Existentes — Desayuno</div>
               <div class="card-body">
                 <!-- Agregar -->
+
                 <div class="mb-3">
-                  <label class="form-label">Agregar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Huevo a la mexicana">
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-danger w-100">Agregar</button></div>
-                    <div class="col-6"><button class="btn btn-secondary w-100">Deshacer</button></div>
-                  </div>
+                  <label class="form-label text-primary fw-bold">Programar Nuevo Menú</label>
+                  
+                  {{-- 1. Iniciamos el formulario apuntando a nuestra nueva ruta --}}
+                  <form action="{{ route('admin.menu.store') }}" method="POST">
+                    @csrf
+                    
+                    {{-- 2. Campo Oculto para decirle al sistema que es Desayuno --}}
+                    <input type="hidden" name="type" value="desayuno">
+
+                    <div class="input-group mb-2">
+                      <input type="text" name="description" class="form-control" placeholder="Ej. Chilaquiles Verdes con Pollo" required>
+                    </div>
+
+                    {{-- 3. LOS DOS CAMPOS NUEVOS OBLIGATORIOS PARA LA BASE DE DATOS --}}
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="small text-muted">Fecha del Menú</label>
+                            <input type="date" name="menu_date" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted">Porciones Totales</label>
+                            <input type="number" name="available_portions" class="form-control" placeholder="Ej. 50" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mt-3">
+                      <div class="col-12">
+                          <button type="submit" class="btn btn-danger w-100 fw-bold">Guardar en el Calendario</button>
+                      </div>
+                    </div>
+                  </form>
+                  
+                  {{-- 4. Etiqueta mágica para mostrar mensajes de éxito --}}
+                  @if(session('success'))
+                      <div class="alert alert-success mt-3 p-2 text-center small fw-bold">
+                          {{ session('success') }}
+                      </div>
+                  @endif
                 </div>
 
                 <!-- Editar -->

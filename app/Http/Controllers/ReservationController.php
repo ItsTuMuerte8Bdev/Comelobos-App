@@ -8,6 +8,8 @@ use App\Models\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ReservationController extends Controller {
     public function index() {
@@ -24,19 +26,16 @@ class ReservationController extends Controller {
 
     public function store(Request $request) {
         $validated = $request->validate([
-            'user_id' => ['required', 'integer', 'exists:users,id'],
             'shift_id' => ['required', 'integer', 'exists:shifts,id'],
             'menu_id' => ['required', 'integer', 'exists:menus,id'],
-            'reservation_date' => ['required', 'date'],
-            'folio' => ['required', 'string', 'max:50', 'unique:reservations,folio'],
-            'qr_code' => ['required', 'string', 'max:255', 'unique:reservations,qr_code'],
-            'status' => ['required', Rule::in([
-                'pending_payment',
-                'paid',
-                'cancelled',
-                'consumed'
-            ])]
+            'reservation_date' => ['required', 'date']
         ]);
+
+        $validated['user_id'] = Auth::id();
+        $validated['folio'] = 'RES-' . strtoupper(Str::random(8));
+        $validated['qr_code'] = 'QR-' . $validated['folio'];
+        $validated['status'] = 'paid';
+
 
         $existingReservation = Reservation::where('user_id', $validated['user_id'])
             ->where('reservation_date', $validated['reservation_date'])

@@ -33,11 +33,12 @@ class AutenticarController extends Controller
             'password.required' => 'Contraseña es obligatoria.',
             'password.min' => 'Debe contener mínimo 8 caracteres.'
         ]);
-
-        if (Auth::attempt($credenciales)) {
-            
-            // Contraseña Correcta: Blindamos la sesión por seguridad
-            $request->session()->regenerate();
+        
+         // Contraseña Coorecta: Regresar a su panel según su rol
+        if (Auth::attempt($credenciales)) {$request->session()->regenerate();
+            if (Auth::user()->role === 'administrativo') {
+                return redirect()->intended('/admin');
+            }
             return redirect()->intended('/inicio');
         }
 

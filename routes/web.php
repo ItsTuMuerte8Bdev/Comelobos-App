@@ -40,6 +40,22 @@ Route::middleware('guest')->group(function () {
 // Interfaz 3: Login(Autenticado)
 Route::middleware('auth')->group(function () {
 
+    /* Panel administrativo (básico) */
+    Route::prefix('admin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
+        Route::get('/menu', [\App\Http\Controllers\AdminController::class, 'menu'])->name('admin.menu');
+        Route::post('/menu/guardar', [\App\Http\Controllers\AdminController::class, 'storeMenu'])->name('admin.menu.store');
+        Route::get('/creditos', [\App\Http\Controllers\AdminController::class, 'creditos'])->name('admin.creditos');
+        Route::get('/checkin', [\App\Http\Controllers\AdminController::class, 'checkin'])->name('admin.checkin');
+        Route::get('/cuenta', [\App\Http\Controllers\AdminController::class, 'cuenta'])->name('admin.cuenta');
+        Route::get('/cuenta/informacion', [\App\Http\Controllers\AdminController::class, 'cuentaInformacion'])->name('admin.cuenta.informacion');
+        Route::get('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'cuentaAjustes'])->name('admin.cuenta.ajustes');
+        Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'cuentaSeguridad'])->name('admin.cuenta.asignacion');
+        Route::get('/cuenta/reporte-movimientos', [\App\Http\Controllers\AdminController::class, 'reporteMovimientos'])->name('admin.cuenta.reporte');
+    });
+
+
+
     // Interfaz 3.1: Pagina Principal
     Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 
@@ -47,6 +63,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/cuenta', function () {
         return view('account');
     })->name('cuenta');
+
+    // Interfaz: Reservar
+    Route::post('/api/crear-reserva',[\App\Http\Controllers\ReservationController::class, 'store'])->name('api.reserva.store');
+    
+    Route::get('/reservar', function () {
+        return view('reservar');
+    })->name('reservar');
+    
+    Route::get('/reservas', function () {
+        return view('reservas');
+    })->name('reservas');
+
 
     Route::get('/informacion', function () {
         return view('informacion');
@@ -64,30 +92,14 @@ Route::middleware('auth')->group(function () {
         return view('menu');
     })->name('menu');
 
-    Route::get('/reservas', function () {
-        return view('reservas');
-    })->name('reservas');
-
     Route::get('/checkin', function () {
         return view('checkin');
     })->name('checkin');
 
-    Route::get('/reservar', function () {
-        return view('reservar');
-    })->name('reservar');
 
-    /* Panel administrativo (básico) */
-    Route::prefix('admin')->group(function () {
-        Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
-        Route::get('/menu', [\App\Http\Controllers\AdminController::class, 'menu'])->name('admin.menu');
-        Route::get('/creditos', [\App\Http\Controllers\AdminController::class, 'creditos'])->name('admin.creditos');
-        Route::get('/checkin', [\App\Http\Controllers\AdminController::class, 'checkin'])->name('admin.checkin');
-        Route::get('/cuenta', [\App\Http\Controllers\AdminController::class, 'cuenta'])->name('admin.cuenta');
-        Route::get('/cuenta/informacion', [\App\Http\Controllers\AdminController::class, 'cuentaInformacion'])->name('admin.cuenta.informacion');
-        Route::get('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'cuentaAjustes'])->name('admin.cuenta.ajustes');
-        Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'cuentaSeguridad'])->name('admin.cuenta.asignacion');
-        Route::get('/cuenta/reporte-movimientos', [\App\Http\Controllers\AdminController::class, 'reporteMovimientos'])->name('admin.cuenta.reporte');
-    });
+
+
+
 
     // Logout mediante AutenticarController. Cierra sesión y redirige.
     Route::post('/login', [AutenticarController::class, 'logout'])->name('logout');

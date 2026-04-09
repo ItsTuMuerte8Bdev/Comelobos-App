@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Comelobos | Reservar</title>
@@ -60,7 +61,7 @@
                         </div>
                     </div>
 
-                    <div class="creditos-box mb-3">Créditos disponibles: <strong id="creditos">180</strong></div>
+                    <div class="creditos-box mb-3">Créditos disponibles: <strong id="creditos">{{ Auth::user()->credits }}</strong></div>
 
                     <div class="text-end">
                         <button id="btn-reservar" class="btn btn-reservar">Reservar</button>
