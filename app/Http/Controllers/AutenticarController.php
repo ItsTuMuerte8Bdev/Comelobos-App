@@ -14,8 +14,24 @@ class AutenticarController extends Controller
     public function login(Request $request)
     {
         $credenciales = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email',
+                // Dominios BUAP
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with($value, '@buap.mx') && 
+                        !str_ends_with($value, '@alumno.buap.mx') &&
+                        !str_ends_with($value, '@alm.buap.mx') &&
+                        !str_ends_with($value, '@correo.buap.mx')) {
+                        $fail('Utliza un correo institucional.');
+                    }
+                }
+            ],
             'password' => ['required', 'string', 'min:8'],
+
+        ], [
+            'email.required' => 'Correo es obligatorio.',
+
+            'password.required' => 'Contraseña es obligatoria.',
+            'password.min' => 'Debe contener mínimo 8 caracteres.'
         ]);
 
         if (Auth::attempt($credenciales)) {
@@ -55,7 +71,7 @@ class AutenticarController extends Controller
                         !str_ends_with($value, '@correo.buap.mx')) {
                         $fail('Utliza un correo institucional.');
                     }
-                },
+                }
             ],
             'password' => ['required', 'string', 'min:8']
         
@@ -89,9 +105,8 @@ class AutenticarController extends Controller
         $validated['second_last_name'] = mb_convert_case($validated['second_last_name'], MB_CASE_TITLE, "UTF-8");
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'cliente';
-
-
-
+        $validated['credits'] = 100; 
+ 
         $user = User::create($validated);
 
         Auth::login($user); // Iniciar su sesión de inmediato

@@ -15,23 +15,35 @@
 <div class="wrap">
     <div class="brand">COMELOBOS</div>
     <div class="card">
-        {{-- Formulario para enviar el email del usuario para el proceso de login --}}
-        <form method="POST" action="{{ route('password') }}">
-            {{-- Token CSRF para proteger contra ataques de falsificación de solicitudes entre sitios --}}
+        {{-- Apuntamos directamente a tu controlador final --}}
+        <form method="POST" action="{{ route('autenticarLogin') }}">
             @csrf
+
             <label for="email">Correo Institucional</label>
             <div class="input">
                 <span class="icon">✉️</span>
+                <input id="email" name="email" type="email" placeholder="correo@ejemplo.com" value="{{ old('email') }}">
                 
-                <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
                 @error('email')
-                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right; margin-top: 5px;">
                         {{ $message }}
                     </div>
                 @enderror
-
             </div>
-            <button class="btn" type="submit">Continuar</button>
+
+            <label for="password" style="margin-top: 15px; display: block;">Contraseña</label>
+            <div class="input">
+                <span class="icon">🔒</span>
+                <input id="password" name="password" type="password" placeholder="Contraseña">
+                
+                @error('password')
+                    <div style="color: red; font-size: 12px; font-weight: normal; text-align: right; margin-top: 5px;">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <button class="btn" type="submit" style="margin-top: 20px;">Iniciar Sesión</button>
         </form>
 
         <div class="muted">Si continúas, aceptas nuestra Política de Privacidad y Términos y Condiciones</div>

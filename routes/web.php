@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 
 // Interfaz 1: Bienvenida
 Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('inicio');
+    }
     return view('welcome');
 })->name('welcome');
 
@@ -21,20 +24,15 @@ Route::middleware('guest')->group(function () {
         return view('login');
     })->name('login');
 
-    // Interfaz 2.2: Contraseña
-    Route::post('/password', function (Request $request) {
-        return view('login_password', ['email' => $request->input('email')]);
-    })->name('password');
-
-    // 2.3: Verifica Credenciales
+    // 2.2: Verifica Credenciales
     Route::post('/autenticarLogin', [AutenticarController::class, 'login'])->name('autenticarLogin');
 
-    // Interfaz 2.4: Registrarse
+    // Interfaz 2.3: Registrarse
     Route::get('/registro', function () {
         return view('register');
     })->name('registrarse');
 
-    // Interfaz 2.5: Procesar Registro
+    // Interfaz 2.4: Procesar Registro
     Route::post('/autenticarRegistro', [AutenticarController::class, 'register'])->name('autenticarRegistro');
 
 });

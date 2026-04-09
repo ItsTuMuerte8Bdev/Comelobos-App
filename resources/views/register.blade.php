@@ -82,7 +82,7 @@
             @csrf
 
             <label for="matriculation_number">Matrícula</label>
-            <input id="matriculation_number" name="matriculation_number" type="text" placeholder="Matrícula">
+            <input id="matriculation_number" name="matriculation_number" type="text" placeholder="Matrícula" value="{{ old('matriculation_number') }}">
                 @error('matriculation_number')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -90,7 +90,7 @@
                 @enderror
 
             <label for="first_name">Nombre(s)</label>
-            <input id="first_name" name="first_name" type="text" placeholder="Nombre(s)">
+            <input id="first_name" name="first_name" type="text" placeholder="Nombre(s)" value="{{ old('first_name') }}">
                 @error('first_name')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -98,7 +98,7 @@
                 @enderror
                 
             <label for="last_name">Primer Apellido (Apellido Paterno)</label>
-            <input id="last_name" name="last_name" type="text" placeholder="Apellido Paterno">
+            <input id="last_name" name="last_name" type="text" placeholder="Apellido Paterno" value="{{ old('last_name') }}">
                 @error('last_name')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -106,7 +106,7 @@
                 @enderror
 
             <label for="second_last_name">Segundo Apellido (Apellido Materno)</label>
-            <input id="second_last_name" name="second_last_name" type="text" placeholder="Apellido Materno">
+            <input id="second_last_name" name="second_last_name" type="text" placeholder="Apellido Materno" value="{{ old('second_last_name') }}">
                 @error('second_last_name')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -114,7 +114,7 @@
                 @enderror
  
             <label for="phone">Teléfono</label>
-            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567">
+            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" value="{{ old('phone') }}">
                 @error('phone')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -122,7 +122,7 @@
                 @enderror
  
             <label for="email">Correo Institucional</label>
-            <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
+            <input id="email" name="email" type="email" placeholder="correo@ejemplo.com" value="{{ old('email') }}">
                 @error('email')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
