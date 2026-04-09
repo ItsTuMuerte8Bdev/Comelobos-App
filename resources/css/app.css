@@ -41,6 +41,9 @@
 .field{margin:10px 0}
 .placeholder{background:#bdbdbd;height:36px;border-radius:3px}
 .field a{color:#05bdb6;text-decoration:none;font-weight:600}
+
+/* Primary link used for actions like 'Regístrate' and '¿Olvidaste tu contraseña?' */
+.primary-link{color:#0d6efd;text-decoration:none;font-weight:600}
 .note{margin-top:16px;color:var(--color-muted)}
 
 /* Login/password specific styles (moved aquí) */

@@ -20,6 +20,7 @@ class AutenticarController extends Controller
                     if (!str_ends_with($value, '@buap.mx') && 
                         !str_ends_with($value, '@alumno.buap.mx') &&
                         !str_ends_with($value, '@alm.buap.mx') &&
+                        !str_ends_with($value, '@comelobos.test') && // Temporalmente se acepta este dominio también
                         !str_ends_with($value, '@correo.buap.mx')) {
                         $fail('Utliza un correo institucional.');
                     }
