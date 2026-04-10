@@ -33,14 +33,16 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'type' => ['required', 'string'], // Desayuno o Comida
-            'description' => ['required', 'string', 'max:255'], // Ej. Huevo a la mexicana
+            'description' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'], // Ej. Huevo a la mexicana
             'menu_date' => ['required', 'date'], // ¿Qué día se sirve?
             'available_portions' => ['required', 'integer', 'min:1'], // ¿Cuántos platos hay?
         ]);
 
         // Por defecto, cuando creas un menú, está disponible
         $validated['status'] = 'available'; 
-
+        $validated['description'] = mb_convert_case($validated['description'], MB_CASE_TITLE, "UTF-8");
+        $validated['price'] = 50;
+        
         // Guardamos en la tabla 'menus'
         Menu::create($validated);
 
