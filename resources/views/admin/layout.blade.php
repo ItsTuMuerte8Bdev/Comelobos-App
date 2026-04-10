@@ -10,12 +10,15 @@
   <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body>
-  <div class="device admin-device" role="application">
+  @php $deviceClass = $deviceClass ?? 'admin-device'; @endphp
+  <div class="device {{ $deviceClass }}" role="application">
     <section class="content-section container-fluid p-0">
       @yield('content')
     </section>
 
-    @include('partials.admin_navbar', ['activeTab' => $activeTab ?? 'admin_home'])
+    @if(empty($hideAdminNavbar))
+      @include('partials.admin_navbar', ['activeTab' => $activeTab ?? 'admin_home'])
+    @endif
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

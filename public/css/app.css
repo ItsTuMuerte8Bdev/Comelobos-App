@@ -25,12 +25,33 @@ body{background:var(--color-bg);display:flex;align-items:center;justify-content:
 /* Splash / Welcome */
 .welcome-root{background:var(--color-surface);min-height:100vh;display:flex;align-items:center;justify-content:center}
 .splash{display:block;position:relative;min-height:100vh;padding:20px}
-.splash .logo{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:clamp(2rem,8vw,4rem); color:var(--color-primary-variant); opacity:0; transform:translate(-50%,-50%) scale(.98); animation:logoSequence 2.5s forwards; letter-spacing:1px; position:absolute; left:50%; top:50%; z-index:3; white-space:nowrap}
+.splash .logo{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:clamp(2rem,8vw,4rem); color:var(--color-primary-variant); opacity:0; transform:translate(-50%,-50%) scale(.98); animation:logoSequence 2.5s forwards; letter-spacing:1px; position:absolute; left:50%; top:50%; z-index:3; white-space:nowrap; will-change:opacity,transform}
 .splash .combined{position:absolute; left:50%; top:50%; transform-origin:center; transform:translate(-50%,-50%) scaleX(0); z-index:4; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-weight:800; font-size:clamp(1.6rem,6.5vw,4rem); color:var(--color-primary-variant); animation:combinedExpand 2.5s 2.5s forwards; white-space:nowrap; opacity:0}
 .splash .overlay{position:fixed; inset:0; background:var(--color-primary); opacity:0; pointer-events:none; z-index:2; animation:overlayFade 2.5s 2.5s forwards}
 
 /* Mantener el logo visible al finalizar la animación (no desaparecer) */
-@keyframes logoSequence{0%{opacity:0; transform:translate(-50%,-50%) scale(.96); color:var(--color-muted-2)}30%{opacity:1; transform:translate(-50%,-50%) scale(1)}85%{opacity:1; transform:translate(-50%,-50%) scale(1)}100%{opacity:1; transform:translate(-50%,-50%) scale(1)}}
+@keyframes logoSequence{
+	0%{
+		opacity:0;
+		transform:translate(-50%,-50%) scale(.96);
+		color:var(--color-muted-2)
+	}
+	30%{
+		opacity:1;
+		transform:translate(-50%,-50%) scale(1)
+	}
+	90%{
+		opacity:1;
+		transform:translate(-50%,-50%) scale(1)
+	}
+	/* Al final hacemos un fade-out y desplazamos levemente hacia arriba
+		 para dejar sitio a la animación combinada (no se solapan) */
+	100%{
+		opacity:0;
+		transform:translate(-50%,-70%) scale(.92);
+		visibility:hidden
+	}
+}
 
 @keyframes combinedExpand{0%{transform:translate(-50%,-50%) scaleX(0); color:var(--color-primary-variant); opacity:0}30%{transform:translate(-50%,-50%) scaleX(0.6); color:var(--color-primary-variant); opacity:1}55%{transform:translate(-50%,-50%) scaleX(1.05); color:var(--color-primary-contrast); opacity:1}80%{transform:translate(-50%,-50%) scaleX(.98); color:var(--color-primary-contrast); opacity:1}100%{transform:translate(-50%,-50%) scaleX(1); color:var(--color-primary-contrast); opacity:1}}
 
@@ -51,7 +72,7 @@ html,body{height:100%}
 @media (max-width:420px){.menu-thumb{width:72px;height:56px}}
 
 /* Admin-specific device: make hero fill almost all height and hide internal scroll */
-.admin-device{height:100vh !important; overflow:hidden !important}
+.admin-device{height:100vh !important; overflow:auto !important}
 /* Make content-section fill device and allow hero inside it to occupy space */
 .admin-device .content-section{height:calc(100vh - 72px); padding:0; display:flex; flex-direction:column}
 .admin-device .content-section .home-hero{flex:1; min-height:60vh}
@@ -59,6 +80,12 @@ html,body{height:100%}
 .admin-device .content-section .hero:not(.home-hero){height:auto; min-height:0; padding:0.5rem 1rem; display:flex; align-items:flex-start; justify-content:flex-start}
 .admin-device .content-section .hero .header-inner{width:100%; display:flex; align-items:center; gap:12px}
 .admin-device .device > *{overflow:visible}
+
+/* Fix: ensure admin navbar sits at the bottom of the device and doesn't overlap content */
+.admin-device{position:relative}
+.admin-device .navbar{position:absolute;left:0;right:0;bottom:0;width:100%;height:72px;z-index:30}
+/* Reserve space at the bottom of the content so it doesn't get hidden by the navbar */
+.admin-device .content-section{padding-bottom:84px}
 
 /* Exception: admin home hero should keep a prominent height */
 .admin-device .content-section .home-hero{
@@ -179,8 +206,39 @@ label{display:block;margin:10px 0 6px;color:#222}
 
 /* Reservar view */
 .reservar-card{max-width:520px;margin:18px auto;padding:18px;background:#fff;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.horario{margin:.25rem .25rem .25rem 0;border-radius:20px;background:#eee;border:1px solid #ddd;padding:.35rem .75rem}
-.horario.active{background:#054e61;color:#fff}
+.horario{margin:.25rem .25rem .25rem 0;border-radius:20px;padding:.35rem .75rem}
+
+/* Estilos específicos para la vista de reservar: hacer que los botones de horario
+   sean bloques anchos, con fondo claro y texto visible por defecto. Esto evita
+   que el texto solo aparezca al hacer hover (conflicto con Bootstrap). */
+.reservar-card .horario.btn{
+	display:block;
+	width:100%;
+	margin:.35rem 0;
+	border-radius:22px;
+	padding:.6rem .75rem;
+	background: linear-gradient(180deg, rgba(5,63,86,0.06) 0%, rgba(5,63,86,0.03) 100%) !important;
+	border:1px solid rgba(5,63,86,0.08);
+	color:var(--color-primary) !important;
+	transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+	text-align:center;
+	font-weight:700;
+	font-size:.95rem;
+	line-height:1.2;
+	opacity:1 !important;
+}
+.reservar-card .horario.btn:hover{
+	transform:translateY(-3px);
+	box-shadow:0 14px 36px rgba(5,63,86,0.12);
+	background: linear-gradient(180deg, rgba(5,63,86,0.10) 0%, rgba(5,63,86,0.05) 100%) !important;
+}
+.reservar-card .horario.btn.active,
+.reservar-card .horario.btn:active{
+	background:var(--color-primary) !important;
+	color:var(--color-primary-contrast) !important;
+	border-color:transparent;
+	box-shadow:0 12px 32px var(--color-primary-shadow);
+}
 .menu-card{border:1px solid #eee;padding:.6rem;border-radius:6px}
 .btn-reservar{background:#3fc0ff;border-color:#3fc0ff;color:#fff}
 .creditos-box{border:1px solid #ccc;padding:.5rem;text-align:center;border-radius:4px}

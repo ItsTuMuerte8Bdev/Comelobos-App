@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller {
     public function index() {
@@ -84,5 +86,32 @@ class UserController extends Controller {
         return response()->json([
             'message' => 'Usuario eliminado correctamente',
         ]);
+    }
+
+    /**
+     * Update the authenticated user's password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'Debe ingresar su contraseña actual.',
+            'password.required' => 'Debe ingresar una nueva contraseña.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        ]);
+
+        if (! Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.'])->withInput();
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return back()->with('success_password', 'Contraseña actualizada correctamente.');
     }
 }

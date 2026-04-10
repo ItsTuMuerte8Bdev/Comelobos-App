@@ -74,9 +74,9 @@ label{display:block;margin:10px 0 6px;color:#222}
     margin:.35rem 0;
     border-radius:22px;
     padding:.6rem .75rem;
-    background: linear-gradient(180deg,#fff4e8 0%, #ffe1cc 100%) !important;
-    border:1px solid #ffd3a8;
-    color:#5a2b00 !important;
+    background: linear-gradient(180deg, rgba(5,63,86,0.06) 0%, rgba(5,63,86,0.03) 100%) !important;
+    border:1px solid rgba(5,63,86,0.08);
+    color:var(--color-primary) !important;
     transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
     text-align:center;
     font-weight:700;
@@ -84,13 +84,17 @@ label{display:block;margin:10px 0 6px;color:#222}
     line-height:1.2;
     opacity:1 !important;
 }
-.reservar-card .horario.btn:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(255,140,38,0.12);background:linear-gradient(180deg,#ffe9d6 0%,#ffd6b8 100%) !important}
+.reservar-card .horario.btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 36px rgba(5,63,86,0.12);
+    background: linear-gradient(180deg, rgba(5,63,86,0.10) 0%, rgba(5,63,86,0.05) 100%) !important;
+}
 .reservar-card .horario.btn.active,
 .reservar-card .horario.btn:active{
-    background:linear-gradient(90deg,#ff8a18 0%,#ff3d00 100%) !important;
-    color:#fff !important;
+    background:var(--color-primary) !important;
+    color:var(--color-primary-contrast) !important;
     border-color:transparent;
-    box-shadow:0 12px 32px rgba(255,77,0,0.18);
+    box-shadow:0 12px 32px var(--color-primary-shadow);
 }
 .menu-card{border:1px solid #eee;padding:.6rem;border-radius:6px}
 .btn-reservar{background:#3fc0ff;border-color:#3fc0ff;color:#fff}

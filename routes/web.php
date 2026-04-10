@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 
 // Interfaz 1: Bienvenida
 Route::get('/', function () {
@@ -81,27 +82,7 @@ Route::middleware('auth')->group(function () {
     })->name('informacion');
 
     // Procesar cambio de contraseña desde la página de Información personal
-    Route::post('/informacion/password', function (Request $request) {
-        $request->validate([
-            'current_password' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ], [
-            'current_password.required' => 'Debe ingresar su contraseña actual.',
-            'password.required' => 'Debe ingresar una nueva contraseña.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
-        ]);
-
-        $user = Auth::user();
-        if (! Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.'])->withInput();
-        }
-
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
-
-        return back()->with('success_password', 'Contraseña actualizada correctamente.');
-    })->name('informacion.password.update');
+    Route::post('/informacion/password', [UserController::class, 'updatePassword'])->name('informacion.password.update');
 
     Route::get('/contactos', function () {
         return view('contactos');

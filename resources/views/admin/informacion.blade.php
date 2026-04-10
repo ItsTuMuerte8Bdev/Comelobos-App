@@ -1,4 +1,8 @@
-@php $activeTab = 'admin_cuenta'; @endphp
+@php
+  $activeTab = 'admin_cuenta';
+  // Usar la clase 'device' (igual que la vista de cliente) para imitar su comportamiento
+  $deviceClass = 'device';
+@endphp
 @extends('admin.layout')
 
 @section('content')
@@ -54,11 +58,12 @@
 
                     <p class="note">Nota: Debe rellenarse con la información de registro y no puede cambiar nada el usuario</p>
 
+                    @include('partials.change_password', ['scope' => 'user'])
                     <div class="d-flex justify-content-center gap-3 mt-4">
-                        <button type="button" id="saveBtn" class="btn btn-success">Guardar Cambios</button>
-                        <button type="button" id="resetBtn" class="btn btn-danger">Anular cambios</button>
+                      <button type="button" id="saveBtn" class="btn btn-success">Guardar Cambios</button>
+                      <button type="button" id="resetBtn" class="btn btn-danger">Anular cambios</button>
                     </div>
-                </form>
+                  </form>
             </div>
         </section>
 
@@ -76,6 +81,8 @@
       modal.show();
     });
   </script>
+
+  
 
   <!-- Reuse modals from shared view -->
   @include('partials.modals_save_reset')
