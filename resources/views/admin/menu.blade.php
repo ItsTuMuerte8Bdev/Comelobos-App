@@ -5,253 +5,216 @@
   <div class="container">
     <div class="row mb-3">
       <div class="col-12">
-        <h4>Administración - Menú</h4>
+        <h4 class="fw-bold text-dark text-center fs-3">Publicador de Menú</h4>
+        <p class="text-muted small">Selecciona una fecha y llena los campos para publicar el menú. Si ya existe un menú para esa fecha, se actualizará automáticamente con los nuevos datos.</p>
       </div>
     </div>
 
-    <ul class="nav nav-tabs mb-3" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="existentes-tab" data-bs-toggle="tab" data-bs-target="#existentes" type="button" role="tab">Existentes</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="editar-tab" data-bs-toggle="tab" data-bs-target="#editar" type="button" role="tab">Editar</button>
-      </li>
-    </ul>
-
     <style>
-      .admin-scroll{max-height: calc(100vh - 220px); overflow-y: auto; overflow-x: hidden; padding-right: 8px; box-sizing: border-box;}
-      .admin-scroll *{box-sizing: border-box}
-      .admin-action-btns .btn{height:44px}
-      /* ensure body/container don't create horizontal overflow */
-      .container, .row {max-width: 100%; overflow: visible}
+      .admin-scroll { max-height: calc(100vh - 180px); overflow-y: auto; overflow-x: hidden; padding-right: 8px; box-sizing: border-box; }
+      .admin-scroll * { box-sizing: border-box; }
+      .container, .row { max-width: 100%; overflow: visible; }
+      
+      /* Estilos personalizados para las tarjetas de menú */
+      .menu-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eaeaea; overflow: hidden; }
+      .menu-card-header { background: #003b5c; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 1.1rem; }
+      .menu-card-header.comida { background: #002133; } /* Un tono más oscuro para diferenciar la comida */
+      .form-label-custom { font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+      .btn-guardar { background-color: #900000; color: white; border: none; padding: 10px; font-weight: bold; transition: background-color 0.2s; }
+      .btn-guardar:hover { background-color: #700000; color: white; }
     </style>
 
     <div class="admin-scroll">
-      <div class="tab-content">
-      <div class="tab-pane fade show active" id="existentes" role="tabpanel" aria-labelledby="existentes-tab">
-        <div class="row">
-          <!-- Left: Desayuno -->
-          <div class="col-md-6">
-            <div class="card mb-3">
-              <div class="card-header">Existentes — Desayuno</div>
-              <div class="card-body">
-                <!-- Agregar -->
+      
+      {{-- Mensaje de Éxito Global --}}
+      @if(session('success'))
+          <div class="alert alert-success p-3 text-center fw-bold shadow-sm mb-4">
+              <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+          </div>
+      @endif
 
-                <div class="mb-3">
-                  <label class="form-label text-primary fw-bold">Programar Nuevo Menú</label>
-                  
-                  {{-- 1. Iniciamos el formulario apuntando a nuestra nueva ruta --}}
-                  <form action="{{ route('admin.menu.store') }}" method="POST">
-                    @csrf
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="menu-card">
+            <div class="menu-card-header">
+              Desayuno
+            </div>
+            <div class="card-body p-4">
+              <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="type" value="desayuno">
+
+                {{-- Fecha y Porciones --}}
+                <div class="row g-2 mb-4">
+                    <div class="col-8">
+                        <label class="form-label-custom">¿Para qué día es?</label>
+                        <input type="date" name="menu_date" class="form-control border-primary shadow-sm" value="{{ old('type') == 'desayuno' ? old('menu_date') : '' }}" required>
+                          @error('menu_date','desayuno')
+                            <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                            </div>
+                          @enderror
                     
-                    {{-- 2. Campo Oculto para decirle al sistema que es Desayuno --}}
-                    <input type="hidden" name="type" value="desayuno">
-
-                    <div class="input-group mb-2">
-                      <input type="text" name="description" class="form-control" placeholder="Ej. Chilaquiles Verdes con Pollo" required>
-                    </div>
-
-                    {{-- 3. LOS DOS CAMPOS NUEVOS OBLIGATORIOS PARA LA BASE DE DATOS --}}
-                    <div class="row g-2 mb-2">
-                        <div class="col-6">
-                            <label class="small text-muted">Fecha del Menú</label>
-                            <input type="date" name="menu_date" class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                            <label class="small text-muted">Porciones Totales</label>
-                            <input type="number" name="available_portions" class="form-control" placeholder="Ej. 50" min="1" required>
-                        </div>
-                    </div>
-
-                    <div class="row g-2 mt-3">
-                      <div class="col-12">
-                          <button type="submit" class="btn btn-danger w-100 fw-bold">Guardar en el Calendario</button>
                       </div>
-                    </div>
-                  </form>
-                  
-                  {{-- 4. Etiqueta mágica para mostrar mensajes de éxito --}}
-                  @if(session('success'))
-                      <div class="alert alert-success mt-3 p-2 text-center small fw-bold">
-                          {{ session('success') }}
+                    <div class="col-4">
+                        <label class="form-label-custom">Porciones</label>
+                        <input type="number" name="available_portions" class="form-control border-primary shadow-sm" placeholder="Ej. 50" min="1" value="{{ old('type') == 'desayuno' ? old('available_portions') : '' }}" required>
+                          @error('available_portions','desayuno')
+                            <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                            </div>
+                          @enderror
                       </div>
-                  @endif
                 </div>
 
-                <!-- Editar -->
-                <div class="mt-4 mb-3">
-                  <label class="form-label">Editar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <select class="form-select mb-2"><option>Se escoge entre la lista existente correspondiente</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Se edita">
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-warning w-100">Editar</button></div>
-                    <div class="col-6"><button class="btn btn-outline-secondary w-100">Cancelar</button></div>
-                  </div>
-                </div>
-
-                <!-- Eliminar -->
-                <div class="mt-4">
-                  <label class="form-label">Eliminar</label>
-                  <div class="row g-2 align-items-center">
-                    <div class="col-8">
-                      <select class="form-select"><option>Huevo a la mexicana</option></select>
-                    </div>
-                    <div class="col-4"><button class="btn btn-danger w-100">Eliminar</button></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Comida -->
-          <div class="col-md-6">
-            <div class="card mb-3">
-              <div class="card-header">Existentes — Comida</div>
-              <div class="card-body">
-                <!-- Agregar -->
+                {{-- Entradas --}}
                 <div class="mb-3">
-                  <label class="form-label">Agregar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Huevo a la mexicana">
+                    <label class="form-label-custom text-dark">Entrada <span class="text-danger">*</span></label>
+                    <input type="text" name="entrada" class="form-control bg-light" placeholder="Escribe la entrada..." value="{{ old('type') == 'desayuno' ? old('entrada') : '' }}" required>
+                      @error('entrada','desayuno')
+                          <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                          </div>
+                      @enderror
                   </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-danger w-100">Agregar</button></div>
-                    <div class="col-6"><button class="btn btn-secondary w-100">Deshacer</button></div>
+
+                {{-- Platillo Principal --}}
+                <div class="mb-3">
+                    <label class="form-label-custom text-dark">Platillo Principal <span class="text-danger">*</span></label>
+                    <input type="text" name="platillo_principal" class="form-control shadow-sm" placeholder="Escribe el platillo principal..." value="{{ old('type') == 'desayuno' ? old('platillo_principal') : '' }}" required>
+                      @error('platillo_principal','desayuno')
+                          <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                          </div>
+                      @enderror
                   </div>
+
+                {{-- Bebida --}}
+                <div class="mb-3">
+                    <label class="form-label-custom text-dark">Bebida <span class="text-danger">*</span></label>
+                    <input type="text" name="bebida" class="form-control bg-light" placeholder="Escribe la bebida..." value="{{ old('type') == 'desayuno' ? old('bebida') : '' }}" required>
+                      @error('bebida','desayuno')
+                          <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+
+                {{-- Alergias / Detalles --}}
+                <div class="mb-4">
+                    <textarea name="description" class="form-control bg-light" rows="2" placeholder="Ingredientes (Prevención de Alergias)" required>{{ old('type') == 'desayuno' ? old('description') : '' }}</textarea>
+                      @error('description','desayuno')
+                          <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+
+                {{-- Imagen --}}
+                <div class="mb-4">
+                    <label class="form-label-custom text-dark">Fotografía del Menú <span class="text-danger">*</span></label>
+                    <input type="file" name="image" class="form-control border-dark shadow-sm" accept="image/*" required>
                 </div>
 
-                <!-- Editar -->
-                <div class="mt-4 mb-3">
-                  <label class="form-label">Editar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <select class="form-select mb-2"><option>Se escoge entre la lista existente correspondiente</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Se edita">
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-warning w-100">Editar</button></div>
-                    <div class="col-6"><button class="btn btn-outline-secondary w-100">Cancelar</button></div>
-                  </div>
-                </div>
-
-                <!-- Eliminar -->
-                <div class="mt-4">
-                  <label class="form-label">Eliminar</label>
-                  <div class="row g-2 align-items-center">
-                    <div class="col-8">
-                      <select class="form-select"><option>Huevo a la mexicana</option></select>
-                    </div>
-                    <div class="col-4"><button class="btn btn-danger w-100">Eliminar</button></div>
-                  </div>
-                </div>
-              </div>
+                {{-- Botón Guardar --}}
+                <button type="submit" class="btn btn-guardar w-100 shadow-sm">
+                    Guardar Cambios
+                </button>
+              </form>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="tab-pane fade" id="editar" role="tabpanel" aria-labelledby="editar-tab">
-        <div class="row">
-          <!-- Left: Editar Desayuno -->
-          <div class="col-md-6">
-            <div class="card mb-3">
-              <div class="card-header">Editar — Desayuno</div>
-              <div class="card-body">
-                <!-- Agregar -->
-                <div class="mb-3">
-                  <label class="form-label">Agregar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Huevo a la mexicana">
-                    <button class="btn btn-outline-secondary">✖</button>
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-danger w-100">Agregar</button></div>
-                    <div class="col-6"><button class="btn btn-secondary w-100">Deshacer</button></div>
-                  </div>
-                </div>
-
-                <!-- Editar -->
-                <div class="mt-4 mb-3">
-                  <label class="form-label">Editar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <select class="form-select mb-2"><option>Se escoge entre la lista existente correspondiente</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Se edita">
-                    <button class="btn btn-outline-secondary">✖</button>
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-warning w-100">Editar</button></div>
-                    <div class="col-6"><button class="btn btn-outline-secondary w-100">Cancelar</button></div>
-                  </div>
-                </div>
-
-                <!-- Eliminar -->
-                <div class="mt-4">
-                  <label class="form-label">Eliminar</label>
-                  <div class="row g-2 align-items-center">
-                    <div class="col-8">
-                      <select class="form-select"><option>Huevo a la mexicana</option></select>
-                    </div>
-                    <div class="col-4"><button class="btn btn-danger w-100">Eliminar</button></div>
-                  </div>
-                </div>
-              </div>
+        <div class="col-md-6 mb-4">
+          <div class="menu-card">
+            <div class="menu-card-header comida">
+              Comida
             </div>
-          </div>
+            <div class="card-body p-4">
+              <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="type" value="comida">
 
-          <!-- Right: Editar Comida -->
-          <div class="col-md-6">
-            <div class="card mb-3">
-              <div class="card-header">Editar — Comida</div>
-              <div class="card-body">
-                <!-- Agregar -->
-                <div class="mb-3">
-                  <label class="form-label">Agregar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Huevo a la mexicana">
-                    <button class="btn btn-outline-secondary">✖</button>
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-danger w-100">Agregar</button></div>
-                    <div class="col-6"><button class="btn btn-secondary w-100">Deshacer</button></div>
-                  </div>
-                </div>
-
-                <!-- Editar -->
-                <div class="mt-4 mb-3">
-                  <label class="form-label">Editar</label>
-                  <select class="form-select mb-2"><option>Entrada, Comida o Bebida</option></select>
-                  <select class="form-select mb-2"><option>Se escoge entre la lista existente correspondiente</option></select>
-                  <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Se edita">
-                    <button class="btn btn-outline-secondary">✖</button>
-                  </div>
-                  <div class="row g-2">
-                    <div class="col-6"><button class="btn btn-warning w-100">Editar</button></div>
-                    <div class="col-6"><button class="btn btn-outline-secondary w-100">Cancelar</button></div>
-                  </div>
-                </div>
-
-                <!-- Eliminar -->
-                <div class="mt-4">
-                  <label class="form-label">Eliminar</label>
-                  <div class="row g-2 align-items-center">
+                {{-- Fecha y Porciones --}}
+                <div class="row g-2 mb-4">
                     <div class="col-8">
-                      <select class="form-select"><option>Huevo a la mexicana</option></select>
-                    </div>
-                    <div class="col-4"><button class="btn btn-danger w-100">Eliminar</button></div>
-                  </div>
+                        <label class="form-label-custom">¿Para qué día es?</label>
+                        <input type="date" name="menu_date" class="form-control border-primary shadow-sm" value="{{ old('type') == 'comida' ? old('menu_date') : '' }}" required>
+                          @error('menu_date','comida')
+                            <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                            </div>
+                          @enderror
+                      </div>
+                    <div class="col-4">
+                        <label class="form-label-custom">Porciones</label>
+                        <input type="number" name="available_portions" class="form-control border-primary shadow-sm" placeholder="Ej. 50" min="1" value="{{ old('type') == 'comida' ? old('available_portions') : '' }}" required>
+                          @error('available_portions','comida')
+                            <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                              {{ $message }}
+                            </div>
+                          @enderror
+                      </div>
                 </div>
-              </div>
+
+                {{-- Entradas --}}
+                <div class="mb-3">
+                    <label class="form-label-custom text-dark">Entrada <span class="text-danger">*</span></label>
+                    <input type="text" name="entrada" class="form-control bg-light" placeholder="Escribe la entrada..." value="{{ old('type') == 'comida' ? old('entrada') : '' }}" required>
+                      @error('entrada','comida')
+                        <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                          {{ $message }}
+                        </div>
+                      @enderror
+                </div>
+
+                {{-- Platillo Principal --}}
+                <div class="mb-3">
+                    <label class="form-label-custom text-dark">Platillo Principal <span class="text-danger">*</span></label>
+                    <input type="text" name="platillo_principal" class="form-control shadow-sm" placeholder="Escribe el platillo principal..." value="{{ old('type') == 'comida' ? old('platillo_principal') : '' }}" required>
+                      @error('platillo_principal', 'comida')
+                        <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                          {{ $message }}
+                        </div>
+                      @enderror
+                </div>
+
+                {{-- Bebida --}}
+                <div class="mb-3">
+                    <label class="form-label-custom text-dark">Bebida <span class="text-danger">*</span></label>
+                    <input type="text" name="bebida" class="form-control bg-light" placeholder="Escribe la bebida..." value="{{ old('type') == 'comida' ? old('bebida') : '' }}" required>
+                      @error('bebida', 'comida')
+                        <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                          {{ $message }}
+                        </div>
+                      @enderror
+                </div>
+
+                {{-- Alergias / Detalles --}}
+                <div class="mb-4">
+                    <textarea name="description" class="form-control bg-light" rows="2" placeholder="Ingredientes (Prevención de Alergias)" required>{{ old('type') == 'comida' ? old('description') : '' }}</textarea>
+                      @error('description', 'comida')
+                        <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
+                          {{ $message }}
+                        </div>
+                      @enderror
+                </div>
+
+                {{-- Imagen --}}
+                <div class="mb-4">
+                    <label class="form-label-custom text-dark">Fotografía del Menú <span class="text-danger">*</span></label>
+                    <input type="file" name="image" class="form-control border-dark shadow-sm" accept="image/*" required>
+                </div>
+
+                {{-- Botón Guardar --}}
+                <button type="submit" class="btn btn-guardar w-100 shadow-sm">
+                    Guardar Cambios
+                </button>
+              </form>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>

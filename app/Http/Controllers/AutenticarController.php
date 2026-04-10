@@ -58,6 +58,13 @@ class AutenticarController extends Controller
     }
 
     public function register(Request $request) {
+        
+        $request->merge([
+            'first_name' => $request->first_name ? mb_convert_case($request->first_name, MB_CASE_TITLE, "UTF-8") : null,
+            'last_name' => $request->last_name ? mb_convert_case($request->last_name, MB_CASE_TITLE, "UTF-8") : null,
+            'second_last_name' => $request->second_last_name ? mb_convert_case($request->second_last_name, MB_CASE_TITLE, "UTF-8") : null,
+        ]);
+    
         $validated = $request->validate([
             'matriculation_number' => ['required', 'digits:9', 'unique:users,matriculation_number'],
             'first_name' => ['required', 'string', 'max:100', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'],
@@ -92,7 +99,7 @@ class AutenticarController extends Controller
             'second_last_name.regex' => 'Formato no válido.',
 
             'phone.required' => 'Ingresa tu Teléfono.',
-            'phone.digits' => 'Debe tener 10 dígitos.',
+            'phone.digits' => 'Debe tener 10 dígitos o sin espacios.',
             'phone.unique' => 'Este teléfono ya está registrado.',
 
             'email.required' => 'Correo Institucional es obligatorio.',
@@ -102,12 +109,9 @@ class AutenticarController extends Controller
             'password.min' => 'Debe contener mínimo 8 caracteres.'
         ]);
         
-        $validated['first_name'] = mb_convert_case($validated['first_name'], MB_CASE_TITLE, "UTF-8");
-        $validated['last_name'] = mb_convert_case($validated['last_name'], MB_CASE_TITLE, "UTF-8");
-        $validated['second_last_name'] = mb_convert_case($validated['second_last_name'], MB_CASE_TITLE, "UTF-8");
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'cliente';
-        $validated['credits'] = 100; 
+        $validated['credits'] = 0; 
  
         $user = User::create($validated);
 

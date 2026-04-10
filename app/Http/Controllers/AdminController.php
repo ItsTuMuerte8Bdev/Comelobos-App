@@ -28,26 +28,58 @@ class AdminController extends Controller
     {
         return view('admin.menu');
     }
-    // Función para guardar el menú en la base de datos
+    
+    // Función para guardar o sobreescribir el menú del día
     public function storeMenu(Request $request)
     {
-        $validated = $request->validate([
-            'type' => ['required', 'string'], // Desayuno o Comida
-            'description' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'], // Ej. Huevo a la mexicana
-            'menu_date' => ['required', 'date'], // ¿Qué día se sirve?
-            'available_portions' => ['required', 'integer', 'min:1'], // ¿Cuántos platos hay?
+
+        $request->merge([
+            'entrada' => $request->entrada ? mb_convert_case($request->entrada, MB_CASE_TITLE, "UTF-8") : null,
+            'platillo_principal' => $request->platillo_principal ? mb_convert_case($request->platillo_principal, MB_CASE_TITLE, "UTF-8") : null,
+            'bebida' => $request->bebida ? mb_convert_case($request->bebida, MB_CASE_TITLE, "UTF-8") : null,
+            'description' => $request->description ? ucfirst(strtolower($request->description)) : null,
         ]);
 
-        // Por defecto, cuando creas un menú, está disponible
-        $validated['status'] = 'available'; 
-        $validated['description'] = mb_convert_case($validated['description'], MB_CASE_TITLE, "UTF-8");
-        $validated['price'] = 50;
-        
-        // Guardamos en la tabla 'menus'
-        Menu::create($validated);
 
-        // Regresamos a la pantalla anterior con el mensaje verde de éxito
-        return back()->with('success', 'Menú agregado correctamente al calendario.');
+        $validated = $request->validateWithBag($request->type,[
+            'type' => ['required', 'in:desayuno,comida'], 
+            'menu_date' => ['required', 'date'], 
+            'entrada' => ['required', 'string', 'max:255','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'], 
+            'platillo_principal' => ['required', 'string', 'max:255','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'],
+            'bebida' => ['required', 'string', 'max:255','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u'],
+            'description' => ['required', 'string', 'max:255','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s,.]+$/u'],
+            'available_portions' => ['required', 'integer', 'min:1'],
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:16384']
+        ],[
+            'type.required' => 'Tipo de Menú es obligatorio.',
+            'type.in' => 'El Tipo de Menú debe ser "Desayuno" o "Comida".',
+            'menu_date.required' => 'Asigne una fecha.',
+            'menu_date.date' => 'Fecha no válida.',
+            'entrada.required' => 'Entrada obligatoria.',
+            'platillo_principal.required' => 'Platillo Principal obligatorio.',
+            'bebida.required' => 'Bebida obligatoria.',
+            'description.required' => 'Descripción obligatoria.',
+            'available_portions.required' => 'Porciones Disponibles obligatorias.',
+            'available_portions.integer' => 'Número de porciones no válido.',
+            'available_portions.min' => 'Debe haber al menos 1 porción disponible.',
+        ]);
+
+        $validated['status'] = 'available'; 
+        $validated['price'] = 35.00;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('menus', 'public');
+            $validated['image_path'] = '/storage/' . $path; 
+        }
+
+        Menu::updateOrCreate(
+            [
+                'menu_date' => $validated['menu_date'],
+                'type' => $validated['type']
+            ],
+            $validated
+        );
+
+        return back()->with('success', '¡El menú del día se ha publicado/actualizado con éxito!');
     }
     
     

@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model {
     protected $fillable = [
+        'type',
         'menu_date',
+        'entrada',
+        'platillo_principal',
+        'bebida',
         'description',
+        'image_path',
         'price',
         'available_portions',
         'status',
