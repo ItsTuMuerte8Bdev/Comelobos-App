@@ -24,9 +24,12 @@ class AdminController extends Controller
     }
 
 
-    public function menu()
+    public function menu() // (Usa el nombre que ya tengas en tu controlador)
     {
-        return view('admin.menu');
+        $fechaHoy = now()->toDateString();
+        $menuDesayuno = Menu::where('menu_date', $fechaHoy)->where('type', 'desayuno')->first();
+        $menuComida = Menu::where('menu_date', $fechaHoy)->where('type', 'comida')->first();
+        return view('admin.menu', compact('menuDesayuno', 'menuComida', 'fechaHoy'));
     }
     
     // Función para guardar o sobreescribir el menú del día

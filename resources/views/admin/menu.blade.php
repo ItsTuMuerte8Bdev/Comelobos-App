@@ -6,7 +6,7 @@
     <div class="row mb-3">
       <div class="col-12">
         <h4 class="fw-bold text-dark text-center fs-3">Publicador de Menú</h4>
-        <p class="text-muted small">Selecciona una fecha y llena los campos para publicar el menú. Si ya existe un menú para esa fecha, se actualizará automáticamente con los nuevos datos.</p>
+        <p class="text-muted small">Selecciona una fecha y llena los campos para publicar el menú. Si ya existe un menú para esa fecha, se actualizará automáticamente con los nuevos datos.</p>      
       </div>
     </div>
 
@@ -33,6 +33,60 @@
           </div>
       @endif
 
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-broadcast me-2"></i>Menú Activo Hoy ({{ \Carbon\Carbon::parse($fechaHoy)->locale('es')->isoFormat('D \d\e MMMM \d\e\l YYYY') }})</h5>
+        </div>
+
+        {{-- Tarjeta Desayuno de Hoy --}}
+        <div class="col-md-6 mb-3">
+            @if($menuDesayuno)
+                <div class="alert alert-info border-info shadow-sm d-flex align-items-center text-start h-100 mb-0">
+                    {{-- Miniatura de la imagen --}}
+                    @if($menuDesayuno->image_path)
+                        <img src="{{ $menuDesayuno->image_path }}" alt="Desayuno" class="rounded shadow-sm me-3" style="width: 90px; height: 90px; object-fit: cover;">
+                    @endif
+                    
+                    {{-- Textos --}}
+                    <div>
+                        <span class="badge bg-info text-dark mb-2">Desayuno Activo</span>
+                        <h6 class="fw-bold mb-1 text-dark">{{ $menuDesayuno->platillo_principal }}</h6>
+                        <p class="small mb-0 text-dark">Entrada: {{ $menuDesayuno->entrada }} | Bebida: {{ $menuDesayuno->bebida }}</p>
+                        <p class="small mb-0 text-muted fw-bold">Disponibles: {{ $menuDesayuno->available_portions }} porciones</p>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-light border-danger border-dashed text-center text-muted shadow-sm h-100 d-flex flex-column justify-content-center mb-0">
+                    <small>No hay desayuno programado para hoy.</small>
+                </div>
+            @endif
+        </div>
+
+        {{-- Tarjeta Comida de Hoy --}}
+        <div class="col-md-6 mb-3">
+            @if($menuComida)
+                <div class="alert alert-info border-info shadow-sm d-flex align-items-center text-start h-100 mb-0">
+                    {{-- Miniatura de la imagen --}}
+                    @if($menuComida->image_path)
+                        <img src="{{ $menuComida->image_path }}" alt="Comida" class="rounded shadow-sm me-3" style="width: 90px; height: 90px; object-fit: cover;">
+                    @endif
+                    
+                    {{-- Textos --}}
+                    <div>
+                        <span class="badge bg-info text-dark mb-2">Comida Activa</span>
+                        <h6 class="fw-bold mb-1 text-dark">{{ $menuComida->platillo_principal }}</h6>
+                        <p class="small mb-0 text-dark">Entrada: {{ $menuComida->entrada }} | Bebida: {{ $menuComida->bebida }}</p>
+                        <p class="small mb-0 text-muted fw-bold">Disponibles: {{ $menuComida->available_portions }} porciones</p>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-light border-danger border-dashed text-center text-muted shadow-sm h-100 d-flex flex-column justify-content-center mb-0">
+                    <small>No hay comida programada para hoy.</small>
+                </div>
+            @endif
+        </div>
+      </div class="mb-4">
+      
       <div class="row">
         <div class="col-md-6 mb-4">
           <div class="menu-card">
