@@ -14,9 +14,8 @@ return new class extends Migration {
             $table->date('reservation_date');
             $table->string('folio', 50)->unique();
             $table->string('qr_code', 255)->unique();
-            $table->enum('status', ['pending_payment', 'paid', 'cancelled', 'consumed'])->default('pending_payment');
+            $table->enum('status', ['paid', 'cancelled', 'consumed'])->default('paid');
             $table->timestamps();
-            $table->unique(['user_id', 'reservation_date']);
         });
     }
 

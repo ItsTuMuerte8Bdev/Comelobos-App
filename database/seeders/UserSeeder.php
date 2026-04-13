@@ -2,37 +2,38 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder {
-    public function run(): void {
-        User::updateOrCreate(
-            ['email' => 'admin@comelobos.test'],
-            [
-                'matriculation_number' => '202300001',
-                'first_name' => 'Administrador',
-                'last_name' => 'Principal',
-                'second_last_name' => 'Del Sistema',
-                'phone' => '2221000001',
-                'password' => Hash::make('password123'),
-                'role' => 'administrativo',
-            ]
-        );
+class UserSeeder extends Seeder
+{
+    public function run(): void
+    {
+        //  Administrativo
+        User::create([
+            'matriculation_number' => '202324071',
+            'first_name' => 'Yahir',
+            'last_name' => 'Flores',
+            'second_last_name' => 'Vera',
+            'phone' => '2220000000',
+            'email' => 'fv202324071@alm.buap.mx',
+            'password' => Hash::make('password123'),
+            'role' => 'administrativo',
+            'credits' => 0.00
+        ]);
 
-        User::updateOrCreate(
-            ['email' => 'cliente@comelobos.test'],
-            [
-                'matriculation_number' => '202300002',
-                'first_name' => 'Pedro Ramón',
-                'last_name' => 'Gómez',
-                'second_last_name' => 'Bonilla',
-                'phone' => '2227543576',
-                'password' => Hash::make('password123'),
-                'role' => 'cliente',
-
-            ]
-        );
+        //  Cliente
+        User::create([
+            'matriculation_number' => '202300001',
+            'first_name' => 'Marta',
+            'last_name' => 'Benitez',
+            'second_last_name' => 'Guzman',
+            'phone' => '2225267634',
+            'email' => 'marta@correo.buap.mx',
+            'password' => Hash::make('password123'),
+            'role' => 'cliente',
+            'credits' => 180.00
+        ]);
     }
 }

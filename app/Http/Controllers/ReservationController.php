@@ -31,79 +31,104 @@ class ReservationController extends Controller {
             'reservation_date' => ['required', 'date']
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['folio'] = 'RES-' . strtoupper(Str::random(8));
-        $validated['qr_code'] = 'QR-' . $validated['folio'];
-        $validated['status'] = 'paid';
+        $user = Auth::user(); // Obtenemos al alumno que está comprando
+        $validated['user_id'] = $user->id;
+        
+        $menu = Menu::findOrFail($validated['menu_id']);
+        $shift = Shift::findOrFail($validated['shift_id']);
 
-
-        $existingReservation = Reservation::where('user_id', $validated['user_id'])
+        // REGLA 1: Verificar si ya tiene una reserva de ESE TIPO hoy
+        $existingReservation = Reservation::where('user_id', $user->id)
             ->where('reservation_date', $validated['reservation_date'])
+            ->where('status', '!=', 'cancelled')
+            ->whereHas('menu', function($q) use ($menu) {
+                $q->where('type', $menu->type); // Bloquea si intenta pedir 2 desayunos
+            })
             ->exists();
 
         if ($existingReservation) {
-            return response()->json([
-                'message' => 'El usuario ya tiene una reservación en esa fecha'
-            ], 422);
+            return back()->withErrors('Ya tienes un ' . ucfirst($menu->type) . ' reservado para este día. (Máximo 1 por alumno)');
         }
 
-        $shift = Shift::findOrFail($validated['shift_id']);
-        $menu = Menu::findOrFail($validated['menu_id']);
-
-        if ($shift->shift_date !== $validated['reservation_date']) {
-            return response()->json([
-                'message' => 'La fecha de la reservación debe coincidir con la fecha del turno'
-            ], 422);
+        // REGLA 2: Verificar que el horario y la comida tengan lugares
+        if ($shift->available_capacity <= 0 || $menu->available_portions <= 0) {
+            return back()->withErrors('Lo sentimos, ya no hay cupo o porciones disponibles para este horario.');
         }
 
-        if ($menu->menu_date !== $validated['reservation_date']) {
-            return response()->json([
-                'message' => 'La fecha de la reservación debe coincidir con la fecha del menú'
-            ], 422);
+        // REGLA 3: LA BILLETERA (¡La magia de los créditos!)
+        if ($user->credits < $menu->price) {
+            return back()->withErrors('Créditos Insuficientes. Tu saldo es de $' . number_format($user->credits, 2) . ' y el menú cuesta $' . number_format($menu->price, 2));
         }
 
-        if ($shift->status !== 'open' || $shift->available_capacity <= 0) {
-            return response()->json([
-                'message' => 'El turno no tiene capacidad disponible'
-            ], 422);
-        }
+        // Preparamos los datos del Boleto
+        $validated['folio'] = 'RES-' . strtoupper(Str::random(8));
+        $validated['qr_code'] = 'QR-' . $validated['folio'];
+        $validated['status'] = 'paid'; // ¡La reserva nace pagada!
 
-        if ($menu->status !== 'available' || $menu->available_portions <= 0) {
-            return response()->json([
-                'message' => 'El menú no tiene porciones disponibles'
-            ], 422);
-        }
+        // EJECUTAR TRANSACCIÓN SEGURA (Si algo falla, no se cobra)
+        DB::transaction(function () use ($validated, $shift, $menu, $user) {
+            
+            // 1. LE COBRAMOS AL ALUMNO
+            $user->credits -= $menu->price;
+            $user->save();
 
-        $reservation = null;
+            // 2. CREAMOS LA RESERVA
+            Reservation::create($validated);
 
-        DB::transaction(function () use ($validated, $shift, $menu, &$reservation) {
-            $validated['status'] = 'pending_payment';
+            // 3. RESTAMOS INVENTARIO (Cupo y Comida)
+            $shift->decrement('available_capacity');
+            if ($shift->available_capacity == 0) $shift->update(['status' => 'full']);
 
-            $reservation = Reservation::create($validated);
-
-            $shift->available_capacity -= 1;
-            if ($shift->available_capacity == 0) {
-                $shift->status = 'full';
-            }
-            $shift->save();
-
-            $menu->available_portions -= 1;
-            if ($menu->available_portions == 0) {
-                $menu->status = 'unavailable';
-            }
-            $menu->save();
+            $menu->decrement('available_portions');
+            if ($menu->available_portions == 0) $menu->update(['status' => 'unavailable']);
         });
 
-        return response()->json([
-            'message' => 'Reservación creada correctamente',
-            'data' => $reservation->load([
-                'user',
-                'shift',
-                'menu',
-                'payment',
-                'consumptionLog'
-            ])
-        ], 201);
+        // Regresamos a la pantalla de Inicio (donde la tarjeta se volverá amarilla)
+        return redirect()->route('inicio');
+    }
+
+    public function cancel(Request $request, $id) {
+        $user = Auth::user();
+        
+        // Buscamos la reserva, asegurándonos de que sea de este usuario
+        $reservation = Reservation::with(['menu', 'shift'])->where('user_id', $user->id)->findOrFail($id);
+
+        if ($reservation->status !== 'paid') {
+            return back()->withErrors('Esta reserva ya fue cancelada o consumida.');
+        }
+
+        // REGLA DEL TIEMPO: Validar los 30 minutos
+        // Unimos la fecha del menú con la hora del turno para tener el momento exacto
+        $fechaHoraTurno = \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->shift->start_time);
+        $limiteCancelacion = $fechaHoraTurno->copy()->subMinutes(30);
+
+        if (\Carbon\Carbon::now()->greaterThan($limiteCancelacion)) {
+            return back()->withErrors('Ya no puedes cancelar. Faltan menos de 30 minutos para el inicio de tu servicio.');
+        }
+
+        // EJECUTAMOS EL REEMBOLSO (Todo o Nada)
+        DB::transaction(function () use ($reservation, $user) {
+            // 1. Matamos la reserva
+            $reservation->update(['status' => 'cancelled']);
+
+            // 2. Le devolvemos su dinero
+            $user->credits += $reservation->menu->price;
+            $user->save();
+
+            // 3. Devolvemos el plato a la olla
+            $reservation->menu->increment('available_portions');
+            if ($reservation->menu->status === 'unavailable') {
+                $reservation->menu->update(['status' => 'available']);
+            }
+
+            // 4. Devolvemos la silla a la mesa (Cupo)
+            $reservation->shift->increment('available_capacity');
+            if ($reservation->shift->status === 'full') {
+                $reservation->shift->update(['status' => 'open']);
+            }
+        });
+
+        return back()->with('success', '¡Reserva cancelada! Tus ' . number_format($reservation->menu->price, 0) . ' pts han sido devueltos a tu cuenta.');
     }
 
     public function show(string $id) {

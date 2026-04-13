@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->decimal('amount', 8, 2);
             $table->timestamp('paid_at')->nullable();
             $table->string('payment_folio', 50)->unique();
-            $table->enum('payment_method', ['cash', 'card', 'transfer', 'qr'])->default('qr');
-            $table->enum('payment_status', ['pending', 'paid', 'rejected', 'cancelled'])->default('pending');
+            $table->enum('payment_method', ['creditos'])->default('creditos');
+            $table->enum('payment_status', ['paid', 'refunded'])->default('paid');
             $table->string('external_reference')->nullable();
 
             $table->timestamps();

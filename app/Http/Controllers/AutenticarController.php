@@ -35,7 +35,7 @@ class AutenticarController extends Controller
             'password.min' => 'Debe contener mínimo 8 caracteres.'
         ]);
         
-         // Contraseña Coorecta: Regresar a su panel según su rol
+         // Contraseña Correcta: Regresar a su panel según su rol
         if (Auth::attempt($credenciales)) {$request->session()->regenerate();
             if (Auth::user()->role === 'administrativo') {
                 return redirect()->intended('/admin');

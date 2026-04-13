@@ -3,27 +3,57 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Menu;
+use App\Models\Shift;
+use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // 1. Revisamos quién acaba de iniciar sesión
         $user = Auth::user();
-
-        // 2. Si el gafete dice 'administrativo', lo mandamos a su panel
         if ($user->role === 'administrativo') {
             return view('admin.index');
         }
 
-        // 3. Si el gafete dice 'cliente', lo mandamos a ver el menú y reservar
         if ($user->role === 'cliente') {
-            return view('index');
+            $hoy = Carbon::now()->toDateString();
+            $userId = Auth::id();
+
+
+            $menuDesayuno = Menu::where('menu_date', $hoy)->where('type', 'desayuno')->where('status', 'available')->first();
+            $menuComida = Menu::where('menu_date', $hoy)->where('type', 'comida')->where('status', 'available')->first();
+            $turnos = Shift::where('shift_date', $hoy)->where('status', 'open')->orderBy('start_time')->get();
+            $turnosDesayuno = $turnos->filter(fn($t) => $t->start_time < '13:00:00');
+            $turnosComida = $turnos->filter(fn($t) => $t->start_time >= '13:00:00');
+
+
+            $reservaDesayuno = Reservation::where('user_id', $userId)
+                ->where('reservation_date', $hoy)
+                ->whereHas('menu', fn($q) => $q->where('type', 'desayuno'))
+                ->whereIn('status', ['paid', 'consumed'])
+                ->first();
+
+            $reservaComida = Reservation::where('user_id', $userId)
+                ->where('reservation_date', $hoy)
+                ->whereHas('menu', fn($q) => $q->where('type', 'comida'))
+                ->whereIn('status', ['paid', 'consumed'])
+                ->first();
+
+            return view('index', compact(
+                'menuDesayuno', 
+                'menuComida', 
+                'turnosDesayuno', 
+                'turnosComida', 
+                'hoy',
+                'reservaDesayuno',
+                'reservaComida'
+            ));
         }
 
-        // Por seguridad, si el rol está vacío o mal escrito, lo cerramos
         Auth::logout();
-        return redirect('/login')->with('error', 'Rol no reconocido');
+        return redirect('/login')->with('error', 'Rol no reconocido o acceso denegado.');
     }
 }

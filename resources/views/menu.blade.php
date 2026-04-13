@@ -18,13 +18,13 @@
 
             <section class="px-3 py-3 flex-auto">
                 <div class="menu-list">
-                    <h6 class="text-danger">Desayuno del día (De 9:00 a 13:00)</h6>
+                    <h6 class="text-danger">Desayuno Del día (De 9:00 a 13:00)</h6>
                     <div class="menu-card d-flex align-items-center mb-4">
                         <div class="menu-text">Huevo a la mexicana con porción de fruta y jugo</div>
                         <img src="https://via.placeholder.com/150x100?text=Desayuno" alt="Desayuno" class="menu-thumb">
                     </div>
 
-                    <h6 class="text-danger">Comida del día (De 13:00 a 17:00)</h6>
+                    <h6 class="text-danger">Comida Del día (De 13:00 a 17:00)</h6>
                     <div class="menu-card d-flex align-items-center mb-4">
                         <div class="menu-text">Sopa de fideos con pollo en salsa verde y agua de sabor</div>
                         <img src="https://via.placeholder.com/150x100?text=Comida" alt="Comida" class="menu-thumb">

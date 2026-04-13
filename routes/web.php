@@ -68,12 +68,19 @@ Route::middleware('auth')->group(function () {
     // Interfaz: Reservar
     Route::post('/api/crear-reserva',[\App\Http\Controllers\ReservationController::class, 'store'])->name('api.reserva.store');
     
-    Route::get('/reservar', function () {
-        return view('reservar');
-    })->name('reservar');
-    
+    // NUEVA RUTA PARA CANCELAR
+    Route::post('/api/reservas/{id}/cancelar', [\App\Http\Controllers\ReservationController::class, 'cancel'])->name('api.reserva.cancel');
+
+
     Route::get('/reservas', function () {
-        return view('reservas');
+        // Buscamos TODAS las reservas del alumno, de la más nueva a la más vieja
+        $reservas = \App\Models\Reservation::with(['menu', 'shift'])
+            ->where('user_id', Auth::id())
+            ->orderBy('reservation_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('reservas', compact('reservas'));
     })->name('reservas');
 
 
@@ -92,12 +99,19 @@ Route::middleware('auth')->group(function () {
         return view('ajustes');
     })->name('ajustes');
 
-    Route::get('/menu', function () {
-        return view('menu');
-    })->name('menu');
 
     Route::get('/checkin', function () {
-        return view('checkin');
+        $hoy = \Carbon\Carbon::now()->toDateString();
+        
+        // Buscamos las reservas del alumno para el día de hoy que estén PAGADAS
+        $reservas = \App\Models\Reservation::with('menu', 'shift')
+            ->where('user_id', Auth::id())
+            ->where('reservation_date', $hoy)
+            ->where('status', 'paid') // <- La magia: Si ya se consumió, ya no sale aquí.
+            ->orderBy('shift_id')
+            ->get();
+
+        return view('checkin', compact('reservas'));
     })->name('checkin');
 
 

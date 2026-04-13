@@ -32,32 +32,30 @@
             <div class="padded">
                 <form>
                     <div class="field mb-3">
+                        <label class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" value="{{ Auth::user()->matriculation_number }}" disabled>
+                    </div>
+                    <div class="field mb-3">
                         <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" value="" disabled>
+                        <input type="text" class="form-control" value="{{ Auth::user()->first_name }}" disabled>
                     </div>
                     <div class="field mb-3">
                         <label class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" value="" disabled>
-                    </div>
-                    <div class="field mb-3">
-                        <label class="form-label">Correo institucional</label>
-                        <input type="email" class="form-control" value="" disabled>
+                        <input type="text" class="form-control" value="{{ Auth::user()->last_name }} {{ Auth::user()->second_last_name }}" disabled>
                     </div>
                     <div class="field mb-3">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" value="" disabled>
+                        <input type="text" class="form-control" value="{{ Auth::user()->phone }}" disabled>
                     </div>
                     <div class="field mb-3">
-                        <label class="form-label">Escuela, Facultad o Dependencia</label>
-                        <input type="text" class="form-control" value="" disabled>
+                        <label class="form-label">Correo Institucional</label>
+                        <input type="email" class="form-control" value="{{ Auth::user()->email }}" disabled>
                     </div>
+
                     <div class="field mb-3">
-                        <label class="form-label">ID o Matrícula</label>
-                        <input type="text" class="form-control" value="" disabled>
+                        <label class="form-label">Créditos</label>
+                        <input type="text" class="form-control" value="{{ Auth::user()->credits }}" disabled>
                     </div>
-
-                    <p class="note">Nota: Debe rellenarse con la información de registro y no puede cambiar nada el usuario</p>
-
                     @include('partials.change_password', ['scope' => 'user'])
                     <div class="d-flex justify-content-center gap-3 mt-4">
                       <button type="button" id="saveBtn" class="btn btn-success">Guardar Cambios</button>

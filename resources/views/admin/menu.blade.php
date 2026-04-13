@@ -22,6 +22,29 @@
       .form-label-custom { font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
       .btn-guardar { background-color: #900000; color: white; border: none; padding: 10px; font-weight: bold; transition: background-color 0.2s; }
       .btn-guardar:hover { background-color: #700000; color: white; }
+
+      .btn-check-custom + .btn-pill {
+          border-radius: 50px; /* Hace la forma de píldora redonda */
+          font-weight: 600;
+          font-size: 0.85rem;
+          padding: 0.4rem 1.2rem;
+          border: 2px solid #003b5c; /* Borde azul marino */
+          color: #003b5c; /* Texto azul marino */
+          background-color: #ffffff; /* Fondo blanco */
+          transition: all 0.2s ease-in-out;
+      }
+      
+      /* Cuando está seleccionado */
+      .btn-check-custom:checked + .btn-pill {
+          background-color: #003b5c; /* Fondo azul marino */
+          color: #ffffff; /* Texto blanco */
+          border-color: #003b5c;
+      }
+      
+      /* Efecto hover ligero cuando no está seleccionado */
+      .btn-check-custom:not(:checked) + .btn-pill:hover {
+          background-color: rgba(0, 59, 92, 0.05);
+      }
     </style>
 
     <div class="admin-scroll">
@@ -121,6 +144,27 @@
                       </div>
                 </div>
 
+                {{-- Horarios de Servicio (Desayuno) --}}
+                <div class="mb-4 p-3 bg-light rounded border">
+                    <label class="form-label-custom text-dark mb-3">Horarios Habilitados <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-wrap gap-2"> 
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="09:00-10:00" id="d_shift1" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="d_shift1">9:00 - 10:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="10:00-11:00" id="d_shift2" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="d_shift2">10:00 - 11:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="11:00-12:00" id="d_shift3" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="d_shift3">11:00 - 12:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="12:00-13:00" id="d_shift4" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="d_shift4">12:00 - 13:00</label>
+                    </div>
+                    @error('shifts', 'desayuno')
+                        <small class="text-danger fw-bold d-block mt-2">Debes seleccionar al menos un horario.</small>
+                    @enderror
+                </div>
+
                 {{-- Entradas --}}
                 <div class="mb-3">
                     <label class="form-label-custom text-dark">Entrada <span class="text-danger">*</span></label>
@@ -209,6 +253,32 @@
                             </div>
                           @enderror
                       </div>
+                </div>
+
+                {{-- Horarios de Servicio (Comida) --}}
+                <div class="mb-4 p-3 bg-light rounded border">
+                    <label class="form-label-custom text-dark mb-3">Horarios Habilitados <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-wrap gap-2">
+                        
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="13:00-14:00" id="c_shift1" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="c_shift1">13:00 - 14:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="14:00-15:00" id="c_shift2" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="c_shift2">14:00 - 15:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="15:00-16:00" id="c_shift3" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="c_shift3">15:00 - 16:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="16:00-17:00" id="c_shift4" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="c_shift4">16:00 - 17:00</label>
+
+                        <input type="checkbox" class="btn-check btn-check-custom" name="shifts[]" value="17:00-18:00" id="c_shift5" autocomplete="off" checked>
+                        <label class="btn btn-pill shadow-sm" for="c_shift5">17:00 - 18:00</label>
+
+                    </div>
+                    @error('shifts', 'comida')
+                        <small class="text-danger fw-bold d-block mt-2">Debes seleccionar al menos un horario.</small>
+                    @enderror
                 </div>
 
                 {{-- Entradas --}}

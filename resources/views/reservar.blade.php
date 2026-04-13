@@ -1,126 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Comelobos | Reservar</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Bootstrap Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    </head>
-    <body>
-        <div class="device" role="application">
-            <main class="hero hero--sm">
-                <div class="header-inner">
-                    <a href="{{ url('/reservas') }}" class="back-btn back-btn--blue">←</a>
-                    <h2 class="page-title">Reservas</h2>
-                </div>
-            </main>
-
-            <section class="px-3 py-3 flex-auto">
-                <div class="reservar-card">
-                    <label class="form-label">Tipo de comida</label>
-                    <select id="tipo" class="form-select mb-3">
-                        <option value="desayuno">Desayuno</option>
-                        <option value="comida">Comida</option>
-                    </select>
-
-                    <label class="form-label">Horario</label>
-                    <p class="text-muted small">Nota: Si elige desayuno, solo se activan ciertos horarios.</p>
-                    <div id="horarios" class="mb-3">
-                        <button class="horario btn">8:00 - 9:00</button>
-                        <button class="horario btn">9:00 - 10:00</button>
-                        <button class="horario btn">10:00 - 11:00</button>
-                        <button class="horario btn">11:00 - 12:00</button>
-                        <button class="horario btn">12:00 - 13:00</button>
-                        <button class="horario btn">13:00 - 14:00</button>
-                        <button class="horario btn">14:00 - 15:00</button>
-                    </div>
-
-                    <label class="form-label">Menú</label>
-                    <div class="menu-card mb-3">
-                        <strong>Desayuno del día (De 9:00 a 13:00)</strong>
-                        <div class="d-flex align-items-center mt-2">
-                            <img src="https://via.placeholder.com/90x60" alt="img" class="thumb-rounded">
-                            <div>
-                                <div>Huevos a la mexicana con porción de fruta y jugo</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="menu-card mb-3">
-                        <strong>Comida del día (De 13:00 a 17:00)</strong>
-                        <div class="d-flex align-items-center mt-2">
-                            <img src="https://via.placeholder.com/90x60" alt="img" class="thumb-rounded">
-                            <div>
-                                <div>Sopa de fideos con pollo en salsa verde y agua de sabor</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="creditos-box mb-3">Créditos disponibles: <strong id="creditos">{{ Auth::user()->credits }}</strong></div>
-
-                    <div class="text-end">
-                        <button id="btn-reservar" class="btn btn-reservar">Reservar</button>
-                    </div>
-                </div>
-            </section>
-
-            @include('partials.navbar', ['activeTab' => 'reservas'])
-        </div>
-
-        <!-- Confirm modal (dinámico dentro de esta vista) -->
-        <div id="confirm-modal" class="modal-overlay">
-            <div class="confirm-box">
-                <p id="confirm-text">¿Confirmar reserva? <br><small class="text-muted">Costo: <span id="costo">35</span></small></p>
-                <div class="confirm-actions">
-                    <button id="btn-cancel" class="btn-cancel">Cancelar</button>
-                    <button id="btn-confirm" class="btn-confirm">Confirmar</button>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comelobos | Reservar Menú</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <style>
+        /* Estilos para las píldoras de horarios (Radio Buttons) */
+        .shift-radio { display: none; }
+        .shift-label {
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            text-align: center;
+            flex: 1 1 calc(50% - 8px); /* Dos columnas en móvil */
+        }
+        .shift-radio:checked + .shift-label {
+            background-color: #0d6efd; /* Azul de selección */
+            border-color: #0d6efd;
+            color: white;
+        }
+        .shift-radio:disabled + .shift-label {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #adb5bd;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        .menu-image {
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+            width: 100%;
+        }
+        .credits-badge {
+            background-color: #ffc107;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="device pb-5" role="application">
+        
+        <main class="hero hero--sm mb-3">
+            <div class="header-inner d-flex justify-content-between align-items-center w-100 px-3">
+                <h2 class="page-title mb-0">Menú de Hoy</h2>
+                <div class="credits-badge">
+                    <i class="bi bi-coin me-1"></i> {{ Auth::user()->credits ?? 0 }} pts
                 </div>
             </div>
-        </div>
+        </main>
 
-        <!-- estilos movidos a app.css -->
+        <section class="px-3 flex-auto">
+            
+            {{-- Errores de Validación (Si intenta reservar doble, etc.) --}}
+            @if($errors->any())
+                <div class="alert alert-danger shadow-sm border-0 rounded-3 mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ $errors->first() }}
+                </div>
+            @endif
 
-        <script>
-            // manejo selección horarios
-            document.querySelectorAll('.horario').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.horario').forEach(b=>b.classList.remove('active'));btn.classList.add('active')})})
+            {{-- ============================== --}}
+            {{-- TARJETA DE DESAYUNO            --}}
+            {{-- ============================== --}}
+            @if($menuDesayuno)
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                @if($menuDesayuno->image_path)
+                    <img src="{{ $menuDesayuno->image_path }}" class="menu-image" alt="Desayuno">
+                @else
+                    <div class="menu-image bg-secondary d-flex align-items-center justify-content-center text-white">
+                        <i class="bi bi-camera text-white-50 fs-1"></i>
+                    </div>
+                @endif
+                
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">Desayuno</span>
+                    <h5 class="card-title fw-bold text-dark mb-1">{{ $menuDesayuno->platillo_principal }}</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-check2-circle text-success me-1"></i> {{ $menuDesayuno->entrada ?? 'Sin entrada' }}<br>
+                        <i class="bi bi-cup-straw text-info me-1"></i> {{ $menuDesayuno->bebida ?? 'Sin bebida' }}
+                    </p>
 
-            // abrir modal de confirmación
-            document.getElementById('btn-reservar').addEventListener('click',()=>{document.getElementById('confirm-modal').style.display='flex'})
-            document.getElementById('btn-cancel').addEventListener('click',()=>{document.getElementById('confirm-modal').style.display='none'})
+                    <form action="{{ route('api.reserva.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="menu_id" value="{{ $menuDesayuno->id }}">
+                        <input type="hidden" name="reservation_date" value="{{ $hoy }}">
 
-            // al confirmar, iniciar animación y redirigir luego de 3s
-            document.getElementById('btn-confirm').addEventListener('click',()=>{
-                const modal = document.getElementById('confirm-modal')
-                modal.style.display='none'
-                // replace contenido por animación
-                const container = document.querySelector('.reservar-card')
-                container.innerHTML = `
-                    <div class="confirm-inner">
-                        <svg width="160" height="160" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v2a2 2 0 0 1-2 2H4v12h16V6h-2a2 2 0 0 1-2-2V2H8z" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        <h4 class="mt-3">Reservando...</h4>
-                        <div class="loader mt-3" id="loader-dots">
-                            <div class="dot" id="d1"></div>
-                            <div class="dot" id="d2"></div>
-                            <div class="dot" id="d3"></div>
+                        <label class="form-label fw-bold text-dark small mb-2">Elige tu horario de servicio:</label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            @foreach($turnosDesayuno as $turno)
+                                <input type="radio" class="shift-radio" name="shift_id" value="{{ $turno->id }}" id="turno_{{ $turno->id }}" {{ $turno->available_capacity <= 0 ? 'disabled' : '' }} required>
+                                <label class="shift-label shadow-sm" for="turno_{{ $turno->id }}">
+                                    {{ \Carbon\Carbon::parse($turno->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($turno->end_time)->format('H:i') }}
+                                </label>
+                            @endforeach
                         </div>
-                    </div>`
 
-                // mostrar puntos uno a uno durante 3 segundos
-                const d1 = document.getElementById('d1')
-                const d2 = document.getElementById('d2')
-                const d3 = document.getElementById('d3')
-                setTimeout(()=>d1.classList.add('show'),300)
-                setTimeout(()=>d2.classList.add('show'),900)
-                setTimeout(()=>d3.classList.add('show'),1500)
+                        <button type="submit" class="btn btn-dark w-100 fw-bold rounded-pill py-2">
+                            Reservar (35 Créditos)
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
 
-                // redirigir tras 3s a la lista y mostrar modal éxito
-                setTimeout(()=>{window.location.href = '{{ url('/reservas') }}?success=1'},3000)
-            })
-        </script>
-    </body>
+            {{-- ============================== --}}
+            {{-- TARJETA DE COMIDA              --}}
+            {{-- ============================== --}}
+            @if($menuComida)
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                @if($menuComida->image_path)
+                    <img src="{{ $menuComida->image_path }}" class="menu-image" alt="Comida">
+                @else
+                    <div class="menu-image bg-secondary d-flex align-items-center justify-content-center text-white">
+                        <i class="bi bi-camera text-white-50 fs-1"></i>
+                    </div>
+                @endif
+                
+                <div class="card-body">
+                    <span class="badge bg-warning text-dark mb-2">Comida</span>
+                    <h5 class="card-title fw-bold text-dark mb-1">{{ $menuComida->platillo_principal }}</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-check2-circle text-success me-1"></i> {{ $menuComida->entrada ?? 'Sin entrada' }}<br>
+                        <i class="bi bi-cup-straw text-info me-1"></i> {{ $menuComida->bebida ?? 'Sin bebida' }}
+                    </p>
+
+                    <form action="{{ route('api.reserva.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="menu_id" value="{{ $menuComida->id }}">
+                        <input type="hidden" name="reservation_date" value="{{ $hoy }}">
+
+                        <label class="form-label fw-bold text-dark small mb-2">Elige tu horario de servicio:</label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            @foreach($turnosComida as $turno)
+                                <input type="radio" class="shift-radio" name="shift_id" value="{{ $turno->id }}" id="turno_{{ $turno->id }}" {{ $turno->available_capacity <= 0 ? 'disabled' : '' }} required>
+                                <label class="shift-label shadow-sm" for="turno_{{ $turno->id }}">
+                                    {{ \Carbon\Carbon::parse($turno->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($turno->end_time)->format('H:i') }}
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 fw-bold rounded-pill py-2">
+                            Reservar (35 Créditos)
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
+
+            @if(!$menuDesayuno && !$menuComida)
+                <div class="text-center text-muted mt-5">
+                    <i class="bi bi-emoji-frown fs-1"></i>
+                    <p class="mt-2">Por el momento no hay menús publicados para el día de hoy.</p>
+                </div>
+            @endif
+
+        </section>
+        
+        {{-- Aquí puedes mantener tu include del Navbar inferior --}}
+        {{-- @include('partials.navbar', ['activeTab' => 'reservar']) --}}
+    </div>
+</body>
 </html>
