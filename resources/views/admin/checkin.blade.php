@@ -1,121 +1,194 @@
-@php $activeTab = 'admin_checkin'; @endphp
-@extends('admin.layout')
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Comelobos Admin | Escáner Check-In</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <style>
+        /* Magia de App Nativa */
+        html, body { height: 100%; overflow: hidden; background-color: #f8f9fa; }
+        .device { height: 100%; display: flex; flex-direction: column; }
+        .main-scroll-area { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 2rem; }
+        .navbar-fixed-bottom { flex-shrink: 0; z-index: 1000; background-color: #ffffff; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
 
-@section('content')
-  <style>
-    /* Conservar espacio para header + navbar y evitar desbordes */
-    .admin-scroll{max-height: calc(100vh - 140px); overflow-y:auto; overflow-x:hidden; padding-right:8px; box-sizing:border-box}
-    .admin-scroll *{box-sizing:border-box}
-    /* Ajustes del visor para que no provoque overflow vertical */
-    #qr-container{height: min(60vh,480px); max-height:60vh; overflow:hidden}
-    #qr-video{width:100%;height:100%;object-fit:cover;display:block}
-  </style>
+        .header-hero { background: #003b5c; color: white; padding: 2rem 1.5rem 3rem 1.5rem; border-radius: 0 0 25px 25px; margin-bottom: -1.5rem; }
+        
+        /* Estilos del Lector QR */
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #000; }
+        #reader video { object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div class="device" role="application">
+        
+        <div class="main-scroll-area">
+            
+            <main class="header-hero text-center">
+                <h3 class="mb-1 fw-bold">Escáner Check-In</h3>
+                <p class="mb-0 text-white-50">Escanea el QR del alumno para entregar</p>
+            </main>
 
-  <div class="admin-scroll">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-        <h4>Check-In (Administrativo)</h4>
-        <p>Escanea QR de compra para marcar check-in. Usa la cámara del dispositivo.</p>
+            <section class="px-3 position-relative z-1 mt-4">
+                <div class="container-sm px-0">
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <label class="form-label">Visor de cámara (QR)</label>
-                <div id="qr-container" style="border:1px solid #e9ecef;border-radius:6px;overflow:hidden;height:480px;">
-                  <video id="qr-video" playsinline style="width:100%;height:100%;object-fit:cover;background:#000;display:block"></video>
+                    @if(session('success'))
+                        <div class="alert alert-success shadow-sm border-0 rounded-3 mb-4 text-center">
+                            <i class="bi bi-check-circle-fill fs-1 d-block mb-2 text-success"></i> 
+                            <strong>{{ session('success') }}</strong>
+                        </div>
+                    @endif
+
+                    <div id="error-alert" class="alert alert-danger shadow-sm border-0 rounded-3 mb-4 d-none">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-msg"></span>
+                    </div>
+
+                    {{-- Contenedor de la Cámara --}}
+                    <div class="card shadow border-0 rounded-4 mb-4">
+                        <div class="card-body p-3 text-center">
+                            <div id="reader"></div>
+                            <p class="text-muted small mt-3 mb-0">Apunta la cámara al código QR de la aplicación del cliente.</p>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="row g-2 mt-2">
-                  <div class="col-6"><button id="start-btn" type="button" class="btn btn-primary w-100">Iniciar cámara</button></div>
-                  <div class="col-6"><button id="stop-btn" type="button" class="btn btn-secondary w-100">Detener</button></div>
-                </div>
-                <small class="text-muted">Permite usar la cámara trasera en móviles.</small>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Resultado QR</label>
-                <input id="qr-result" class="form-control mb-2" type="text" placeholder="Resultado del QR" readonly>
-                <div class="row g-2">
-                  <div class="col-6"><button id="clear-btn" type="button" class="btn btn-secondary w-100">Deshacer</button></div>
-                  <div class="col-6"><button id="mark-btn" type="button" class="btn btn-danger w-100">Marcar</button></div>
-                </div>
-              </div>
-            </div>
-          </div>
+            </section>
         </div>
 
-        <!-- Lista de usuarios removida: el check-in se realiza únicamente por QR -->
-      </div>
+        <div class="navbar-fixed-bottom">
+            @include('partials.admin_navbar', ['activeTab' => 'checkin'])
+        </div>
     </div>
-  </div>
 
-  <!-- Hidden canvas used to capture frames for decoding -->
-  <canvas id="qr-canvas" style="display:none"></canvas>
+    {{-- ========================================================= --}}
+    {{-- MODAL DE CONFIRMACIÓN (Oculto por defecto)                --}}
+    {{-- ========================================================= --}}
+    <div class="modal fade" id="confirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0 bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold w-100 text-center"><i class="bi bi-ticket-detailed me-2"></i>Validar Entrega</h5>
+                </div>
+                <div class="modal-body pt-4 pb-4 px-4">
+                    
+                    <div class="mb-3">
+                        <label class="text-muted small fw-bold">Cliente:</label>
+                        <h5 id="modal-nombre" class="fw-bold text-dark mb-0">--</h5>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted small fw-bold">Platillo Reservado:</label>
+                        <h6 id="modal-menu" class="text-primary fw-bold mb-0">--</h6>
+                    </div>
 
-  <style>
-    /* Make QR container responsive: fixed height on desktop, vh on mobile */
-    @media (max-width: 768px){
-      #qr-container{height:50vh !important}
-    }
-  </style>
-  <!-- jsQR from CDN -->
-  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
-  <script>
-    let video = document.getElementById('qr-video');
-    let canvas = document.getElementById('qr-canvas');
-    let ctx = canvas.getContext('2d');
-    let stream = null;
-    let scanning = false;
+                    <div class="mb-4">
+                        <label class="text-muted small fw-bold">Horario de Consumo:</label>
+                        <p id="modal-horario" class="mb-0 fw-bold">--</p>
+                    </div>
 
-    async function startScanner(){
-      if (scanning) return;
-      try{
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        video.srcObject = stream;
-        await video.play();
-        scanning = true;
-        tick();
-      }catch(e){
-        alert('No se pudo acceder a la cámara: ' + e.message);
-      }
-    }
+                    <form action="{{ route('admin.checkin.consume') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="reservation_id" id="modal-res-id" value="">
+                        
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary w-100 fw-bold rounded-pill" onclick="reanudarCamara()">Cancelar</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-success w-100 fw-bold rounded-pill shadow-sm">
+                                    Entregar <i class="bi bi-check2 me-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
-    function stopScanner(){
-      scanning = false;
-      if (stream){
-        stream.getTracks().forEach(t=>t.stop());
-        stream = null;
-      }
-      video.pause();
-      video.srcObject = null;
-    }
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function tick(){
-      if (!scanning) return;
-      if (video.readyState === video.HAVE_ENOUGH_DATA){
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video,0,0,canvas.width,canvas.height);
-        let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-        let code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-        if (code){
-          document.getElementById('qr-result').value = code.data;
-          stopScanner();
-          return;
+    {{-- Librerías Necesarias --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- Librería del Lector QR --}}
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <script>
+        const html5QrCode = new Html5Qrcode("reader");
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const errorAlert = document.getElementById('error-alert');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Función que se ejecuta cuando la cámara detecta un QR
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            // 1. Pausamos la cámara para que no escanee dos veces
+            html5QrCode.pause(true);
+            errorAlert.classList.add('d-none');
+
+            // 2. Vamos a la base de datos a preguntar por el QR
+            fetch('{{ route("admin.checkin.info") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ qr_code: decodedText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // 3. Si existe, rellenamos los datos del Modal
+                    const res = data.reservation;
+                    document.getElementById('modal-nombre').innerText = res.user.first_name + ' ' + res.user.last_name + ' ' + (res.user.second_last_name || '');
+                    document.getElementById('modal-menu').innerText = res.menu.platillo_principal;
+                    
+                    // Formatear la hora
+                    const start = res.shift.start_time.substring(0, 5);
+                    const end = res.shift.end_time.substring(0, 5);
+                    document.getElementById('modal-horario').innerText = start + ' a ' + end + ' hrs.';
+                    
+                    document.getElementById('modal-res-id').value = res.id;
+                    
+                    // 4. Mostramos el modal
+                    confirmModal.show();
+                } else {
+                    // Si el QR ya fue usado o no existe
+                    errorMsg.innerText = data.message;
+                    errorAlert.classList.remove('d-none');
+                    // Esperamos 3 segundos y reanudamos la cámara
+                    setTimeout(reanudarCamara, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reanudarCamara();
+            });
+        };
+
+        function reanudarCamara() {
+            confirmModal.hide();
+            if (html5QrCode.getState() === 3) { // 3 = PAUSED
+                html5QrCode.resume();
+            }
         }
-      }
-      requestAnimationFrame(tick);
-    }
 
-    document.getElementById('start-btn').addEventListener('click', startScanner);
-    document.getElementById('stop-btn').addEventListener('click', stopScanner);
-    document.getElementById('clear-btn').addEventListener('click', ()=>{document.getElementById('qr-result').value='';});
-    document.getElementById('mark-btn').addEventListener('click', ()=>{
-      let val = document.getElementById('qr-result').value;
-      if (!val){ alert('No hay QR escaneado'); return; }
-      // Aquí se puede enviar val al servidor para marcar check-in
-      alert('Marcado con QR: ' + val);
-    });
-  </script>
-@endsection
+        // Configuración de la cámara (Usamos la trasera por defecto)
+        const config = { 
+          fps: 10, 
+          qrbox: function(videoWidth, videoHeight) {
+            // Calcula el 80% del lado más pequeño de la pantalla para que el cuadro siempre quepa perfecto
+            let edgeSize = Math.min(videoWidth, videoHeight) * 0.8;
+            return { width: edgeSize, height: edgeSize };
+          }
+        };
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+        .catch(err => {
+            // Si el dispositivo no tiene cámara o el usuario denegó los permisos
+            document.getElementById('reader').innerHTML = '<div class="p-5 bg-light text-danger fw-bold"><i class="bi bi-camera-video-off fs-1 d-block mb-2"></i>Por favor, permite el acceso a la cámara.</div>';
+        });
+    </script>
+</body>
+</html>

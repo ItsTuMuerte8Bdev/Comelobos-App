@@ -44,15 +44,26 @@ Route::middleware('auth')->group(function () {
     /* Panel administrativo (básico) */
     Route::prefix('admin')->group(function () {
         Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
-        Route::get('/menu', [\App\Http\Controllers\AdminController::class, 'menu'])->name('admin.menu');
         Route::post('/menu/guardar', [\App\Http\Controllers\AdminController::class, 'storeMenu'])->name('admin.menu.store');
+        
         Route::get('/creditos', [\App\Http\Controllers\AdminController::class, 'creditos'])->name('admin.creditos');
+        Route::post('/creditos/agregar', [\App\Http\Controllers\AdminController::class, 'addCreditos'])->name('admin.creditos.add');
+
         Route::get('/checkin', [\App\Http\Controllers\AdminController::class, 'checkin'])->name('admin.checkin');
+        
+        // NUEVAS RUTAS PARA EL ESCÁNER
+        Route::post('/checkin/info', [\App\Http\Controllers\AdminController::class, 'getCheckinInfo'])->name('admin.checkin.info');
+        Route::post('/checkin/consumir', [\App\Http\Controllers\AdminController::class, 'consumeCheckin'])->name('admin.checkin.consume');
+
+        // Rutas del Menú de Cuenta
         Route::get('/cuenta', [\App\Http\Controllers\AdminController::class, 'cuenta'])->name('admin.cuenta');
         Route::get('/cuenta/informacion', [\App\Http\Controllers\AdminController::class, 'cuentaInformacion'])->name('admin.cuenta.informacion');
         Route::get('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'cuentaAjustes'])->name('admin.cuenta.ajustes');
-        Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'cuentaSeguridad'])->name('admin.cuenta.asignacion');
-        Route::get('/cuenta/reporte-movimientos', [\App\Http\Controllers\AdminController::class, 'reporteMovimientos'])->name('admin.cuenta.reporte');
+        Route::get('/cuenta/reporte', [\App\Http\Controllers\AdminController::class, 'cuentaReporte'])->name('admin.cuenta.reporte');
+        
+        // Asignación de Roles
+        Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'asignacionRoles'])->name('admin.asignacion_roles');
+        Route::post('/cuenta/asignacion-roles/{id}', [\App\Http\Controllers\AdminController::class, 'updateRole'])->name('admin.update_role');
     });
 
 
@@ -113,11 +124,6 @@ Route::middleware('auth')->group(function () {
 
         return view('checkin', compact('reservas'));
     })->name('checkin');
-
-
-
-
-
 
     // Logout mediante AutenticarController. Cierra sesión y redirige.
     Route::post('/login', [AutenticarController::class, 'logout'])->name('logout');

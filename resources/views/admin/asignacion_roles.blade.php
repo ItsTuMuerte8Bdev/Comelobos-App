@@ -1,96 +1,132 @@
-@php $activeTab = 'admin_cuenta'; @endphp
-@extends('admin.layout')
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Comelobos Admin | Roles</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <style>
+        /* Magia de App Nativa (Layout Congelado) */
+        html, body { height: 100%; overflow: hidden; background-color: #f8f9fa; }
+        .device { height: 100%; display: flex; flex-direction: column; }
+        .main-scroll-area { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 2rem; }
+        .navbar-fixed-bottom { flex-shrink: 0; z-index: 1000; background-color: #ffffff; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
 
-@section('content')
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="hero app-header">
-          <div class="header-inner">
-            <a href="{{ route('admin.cuenta') }}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
-            <h2>Usuarios</h2>
-          </div>
+        /* Estilos visuales */
+        .header-hero { background: #003b5c; color: white; padding: 2rem 1.5rem 3rem 1.5rem; border-radius: 0 0 25px 25px; margin-bottom: -1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="device" role="application">
+        
+        <div class="main-scroll-area">
+            
+            {{-- HEADER AZUL --}}
+            <main class="header-hero d-flex align-items-center">
+                <a href="{{ route('admin.cuenta') ?? '#' }}" class="text-white me-3 fs-4"><i class="bi bi-arrow-left"></i></a>
+                <h3 class="mb-0 fw-bold">Asignación de Roles</h3>
+            </main>
+
+            <section class="px-3 position-relative z-1 mt-4">
+                <div class="container-sm px-0">
+
+                    {{-- Alertas --}}
+                    @if($errors->any())
+                        <div class="alert alert-danger shadow-sm border-0 rounded-3 mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ $errors->first() }}
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="alert alert-success shadow-sm border-0 rounded-3 mb-4">
+                            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                        </div>
+                    @endif
+
+                    {{-- 1. FORMULARIO DE BÚSQUEDA --}}
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <form action="{{ route('admin.asignacion_roles') }}" method="GET">
+                                <label class="form-label fw-bold text-dark small mb-2">Buscar Matrícula</label>
+                                <div class="input-group">
+                                    <input type="text" name="matricula" class="form-control bg-light border-secondary" placeholder="Ej. 202300001" value="{{ request('matricula') }}" required>
+                                    <button type="submit" class="btn btn-dark px-4 fw-bold shadow-sm">Buscar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- 2. RESULTADOS DEL USUARIO --}}
+                    @if(isset($usuario))
+                        <div class="card shadow border-0 rounded-4 border-top border-primary border-4 mb-4">
+                            <div class="card-body p-4">
+                                
+                                <h5 class="fw-bold mb-3 text-dark border-bottom pb-2">Información del Usuario</h5>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small mb-1">Nombre Completo</label>
+                                    <input type="text" class="form-control fw-bold" value="{{ $usuario->first_name }} {{ $usuario->last_name }} {{ $usuario->second_last_name }}" readonly disabled>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small mb-1">Correo Institucional</label>
+                                    <input type="text" class="form-control" value="{{ $usuario->email }}" readonly disabled>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label text-muted small mb-1">Teléfono</label>
+                                    <input type="text" class="form-control" value="{{ $usuario->phone }}" readonly disabled>
+                                </div>
+
+                                <h5 class="fw-bold mb-3 text-dark border-bottom pb-2">Gestión de Acceso</h5>
+
+                                <form action="{{ route('admin.update_role', $usuario->id) }}" method="POST" id="form-rol">
+                                    @csrf
+                                    <label class="form-label fw-bold text-dark small mb-2">Selecciona el nuevo rol:</label>
+                                    
+                                    <select name="role" id="rol_select" class="form-select mb-4 py-2 border-primary fw-bold" required>
+                                        <option value="cliente" {{ $usuario->role === 'cliente' ? 'selected' : '' }}>Cliente</option>
+                                        <option value="administrativo" {{ $usuario->role === 'administrativo' ? 'selected' : '' }}>Administrativo</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-warning w-100 fw-bold rounded-pill py-2 shadow-sm text-dark" onclick="return confirmarCambioRol(event)">
+                                        <i class="bi bi-person-fill-gear me-2"></i> Aplicar Cambios
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        {{-- Script de Confirmación --}}
+                        <script>
+                            function confirmarCambioRol(event) {
+                                const select = document.getElementById('rol_select');
+                                const nuevoRol = select.options[select.selectedIndex].text;
+                                const nombreCompleto = "{{ $usuario->first_name }} {{ $usuario->last_name }} {{ $usuario->second_last_name }}";
+                                
+                                const mensaje = `¿Estás seguro de que ${nombreCompleto} ahora será ${nuevoRol}?`;
+                                
+                                if (!confirm(mensaje)) {
+                                    event.preventDefault();
+                                    return false;
+                                }
+                                return true;
+                            }
+                        </script>
+                    @endif
+
+                </div>
+            </section>
         </div>
 
-        <section class="px-3 py-3 content-section">
-          <div class="padded container-sm">
+        <div class="navbar-fixed-bottom">
+            {{-- ⚠️ IMPORTANTE: Ajusta 'partials.admin_navbar' si el archivo de tu menú inferior de admin se llama diferente --}}
+            @include('partials.admin_navbar', ['activeTab' => 'cuenta'])
+        </div>
 
-            <label class="form-label">ID o Matrícula</label>
-            <div class="input-group mb-3">
-              <input id="buscar_id" type="text" class="form-control rounded-pill" placeholder="2023XXXXX">
-              <button id="buscarBtn" class="btn btn-danger rounded-pill ms-2">Buscar</button>
-            </div>
-
-            <div id="usuario_info">
-              <div class="mb-2">
-                <label class="form-label">Nombre</label>
-                <input id="nombre" type="text" class="form-control readonly-field" value="" readonly>
-              </div>
-              <div class="mb-2">
-                <label class="form-label">Apellidos</label>
-                <input id="apellidos" type="text" class="form-control readonly-field" value="" readonly>
-              </div>
-              <div class="mb-2">
-                <label class="form-label">Correo institucional</label>
-                <input id="correo" type="text" class="form-control readonly-field" value="" readonly>
-              </div>
-              <div class="mb-2">
-                <label class="form-label">Teléfono</label>
-                <input id="telefono" type="text" class="form-control readonly-field" value="" readonly>
-              </div>
-            </div>
-
-            <div class="mt-3">
-              <label class="form-label">Rol asignado</label>
-              <select id="rol_select" class="form-select mb-3">
-                <option value="estudiante">Estudiante</option>
-                <option value="docente">Docente</option>
-                <option value="administrativo">Administrativo</option>
-                <option value="invitado">Invitado</option>
-              </select>
-
-              <div class="d-flex justify-content-between">
-                <div>
-                  <button id="deshacerRol" class="btn btn-outline-secondary rounded-pill px-3">Deshacer</button>
-                </div>
-                <div>
-                  <button id="confirmarRol" class="btn btn-danger rounded-pill px-4">Confirmar</button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-      </div>
     </div>
-  </div>
-
-  <script>
-    // Cliente: buscar y rellenar campos de solo lectura (simulado)
-    document.getElementById('buscarBtn').addEventListener('click', function(){
-      var id = document.getElementById('buscar_id').value || '';
-      // limpiar campos
-      document.getElementById('nombre').value = '';
-      document.getElementById('apellidos').value = '';
-      document.getElementById('correo').value = '';
-      document.getElementById('telefono').value = '';
-
-      if (!id) return; // sin búsqueda, campos quedan vacíos
-
-      // Simulación: rellenar con datos de ejemplo — en integración reemplazaremos por respuesta del servidor
-      document.getElementById('nombre').value = 'Juan';
-      document.getElementById('apellidos').value = 'Pérez';
-      document.getElementById('correo').value = 'juan@example.com';
-      document.getElementById('telefono').value = '555-1234';
-    });
-
-    document.getElementById('deshacerRol').addEventListener('click', function(){
-      document.getElementById('rol_select').selectedIndex = 0;
-    });
-    document.getElementById('confirmarRol').addEventListener('click', function(){
-      alert('Rol actualizado (simulado): '+ document.getElementById('rol_select').value);
-    });
-  </script>
-
-@endsection
+</body>
+</html>

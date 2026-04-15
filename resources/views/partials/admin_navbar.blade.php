@@ -3,7 +3,6 @@
 
     $items = [
         ['key' => 'admin_home', 'label' => 'Inicio', 'icon' => 'bi-house', 'href' => url('/admin')],
-        ['key' => 'admin_menu', 'label' => 'Menú', 'icon' => 'bi-list', 'href' => url('/admin/menu')],
         ['key' => 'admin_checkin', 'label' => 'Check-In', 'icon' => 'bi-people', 'href' => url('/admin/checkin')],
         ['key' => 'admin_creditos', 'label' => 'Créditos', 'icon' => 'bi-credit-card', 'href' => url('/admin/creditos')],
         ['key' => 'admin_cuenta', 'label' => 'Cuenta', 'icon' => 'bi-person', 'href' => url('/admin/cuenta')],
