@@ -11,7 +11,8 @@
     
     <style>
         /* Magia de App Nativa (Layout Congelado) */
-        html, body { height: 100%; overflow: hidden; background-color: #f8f9fa; }
+        /* Permitimos scroll para evitar problemas de stacking context con modales */
+        html, body { height: 100%; overflow: auto; background-color: #f8f9fa; }
         .device { height: 100%; display: flex; flex-direction: column; }
         .main-scroll-area { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 2rem; }
         .navbar-fixed-bottom { flex-shrink: 0; z-index: 1000; background-color: #ffffff; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
@@ -93,28 +94,65 @@
                                         <option value="administrativo" {{ $usuario->role === 'administrativo' ? 'selected' : '' }}>Administrativo</option>
                                     </select>
 
-                                    <button type="submit" class="btn btn-warning w-100 fw-bold rounded-pill py-2 shadow-sm text-dark" onclick="return confirmarCambioRol(event)">
+                                    <button type="button" class="btn btn-warning w-100 fw-bold rounded-pill py-2 shadow-sm text-dark" id="btn-open-role-modal" data-bs-toggle="modal" data-bs-target="#confirmRoleModal">
                                         <i class="bi bi-person-fill-gear me-2"></i> Aplicar Cambios
                                     </button>
                                 </form>
+                                
+
+                                {{-- Botón para restablecer contraseña (usa modal de confirmación) --}}
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-danger w-100 fw-bold rounded-pill py-2 shadow-sm" id="btn-reset-password" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i> Reestablecimiento de contraseña
+                                    </button>
+                                </div>
+
+                                {{-- Formulario oculto que realizará la petición POST para resetear la contraseña --}}
+                                <form id="form-reset-password" action="{{ route('admin.reset_password', $usuario->id) }}" method="POST" style="display:none;">
+                                    @csrf
+                                </form>
+
+                                <!-- Modales movidos al final del documento para evitar conflictos de stacking context -->
+
+                                <script>
+                                    // Usar triggers nativos de Bootstrap para abrir los modales.
+                                    // Sólo necesitamos enviar los formularios cuando se confirme.
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const btnConfirmReset = document.getElementById('confirm-reset');
+                                        if (btnConfirmReset) {
+                                            btnConfirmReset.addEventListener('click', function() {
+                                                // Enviar el formulario oculto que realiza el POST
+                                                document.getElementById('form-reset-password').submit();
+                                            });
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
 
-                        {{-- Script de Confirmación --}}
                         <script>
-                            function confirmarCambioRol(event) {
-                                const select = document.getElementById('rol_select');
-                                const nuevoRol = select.options[select.selectedIndex].text;
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const confirmRoleText = document.getElementById('confirmRoleText');
+                                const rolSelect = document.getElementById('rol_select');
                                 const nombreCompleto = "{{ $usuario->first_name }} {{ $usuario->last_name }} {{ $usuario->second_last_name }}";
-                                
-                                const mensaje = `¿Estás seguro de que ${nombreCompleto} ahora será ${nuevoRol}?`;
-                                
-                                if (!confirm(mensaje)) {
-                                    event.preventDefault();
-                                    return false;
+
+                                // Actualizar texto del modal cuando se abra (via data-bs-target)
+                                const btnOpen = document.getElementById('btn-open-role-modal');
+                                if (btnOpen) {
+                                    btnOpen.addEventListener('click', function() {
+                                        const nuevoRol = rolSelect.options[rolSelect.selectedIndex].text;
+                                        confirmRoleText.textContent = `¿Estás seguro de que ${nombreCompleto} ahora será ${nuevoRol}?`;
+                                    });
                                 }
-                                return true;
-                            }
+
+                                // Enviar formulario cuando se confirme el cambio de rol
+                                const btnConfirm = document.getElementById('confirm-role-btn');
+                                if (btnConfirm) {
+                                    btnConfirm.addEventListener('click', function() {
+                                        document.getElementById('form-rol').submit();
+                                    });
+                                }
+                            });
                         </script>
                     @endif
 
@@ -128,5 +166,45 @@
         </div>
 
     </div>
+</div>
+                                <!-- Modal para confirmar cambio de rol -->
+                                <div class="modal fade" id="confirmRoleModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirmar cambio de rol</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p id="confirmRoleText">¿Estás seguro de aplicar el cambio de rol?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-warning text-dark" id="confirm-role-btn" data-bs-dismiss="modal">Confirmar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal de confirmación -->
+                                <div class="modal fade" id="confirmResetModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirmar restablecimiento</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>¿Deseas restablecer la contraseña de este usuario? La nueva contraseña será su número de teléfono registrado.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" id="confirm-reset" data-bs-dismiss="modal">Confirmar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

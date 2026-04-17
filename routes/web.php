@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
         // Asignación de Roles
         Route::get('/cuenta/asignacion-roles', [\App\Http\Controllers\AdminController::class, 'asignacionRoles'])->name('admin.asignacion_roles');
         Route::post('/cuenta/asignacion-roles/{id}', [\App\Http\Controllers\AdminController::class, 'updateRole'])->name('admin.update_role');
+        Route::post('/cuenta/asignacion-roles/{id}/reset-password', [\App\Http\Controllers\AdminController::class, 'resetPassword'])->name('admin.reset_password');
     });
 
 

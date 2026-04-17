@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Shift;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -251,5 +252,27 @@ class AdminController extends Controller
         $usuario->save();
 
         return redirect()->route('admin.asignacion_roles')->with('success', '¡Éxito! El usuario ' . $usuario->first_name . ' ahora es ' . ucfirst($usuario->role) . '.');
+    }
+
+    // Restablece la contraseña del usuario a su teléfono (hash)
+    public function resetPassword(Request $request, $id)
+    {
+        $usuario = \App\Models\User::findOrFail($id);
+
+        if ($usuario->id === Auth::id()) {
+            return back()->withErrors('Por seguridad, no puedes restablecer tu propia contraseña desde aquí.');
+        }
+
+        // Usamos el teléfono registrado como nueva contraseña (hashed)
+        $telefono = $usuario->phone ?? null;
+
+        if (!$telefono) {
+            return back()->withErrors('El usuario no tiene un teléfono registrado, no es posible restablecer la contraseña.');
+        }
+
+        $usuario->password = Hash::make($telefono);
+        $usuario->save();
+
+        return redirect()->route('admin.asignacion_roles', ['matricula' => $usuario->matriculation_number])->with('success', 'Contraseña restablecida correctamente.');
     }
 }
