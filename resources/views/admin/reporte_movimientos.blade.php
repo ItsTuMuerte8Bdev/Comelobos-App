@@ -1,116 +1,165 @@
-@php $activeTab = 'admin_cuenta'; @endphp
-@extends('admin.layout')
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Comelobos Admin | Reportes</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <style>
+        /* 1. Reseteo ABSOLUTO para el navegador */
+        html, body { 
+            height: 100vh; 
+            width: 100%; 
+            overflow: hidden; 
+            background-color: #e9ecef; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+        }
+        
+        /* 2. Contenedor Central con el espacio superior */
+        .device { 
+            /* TRUCO: Altura total menos 1.5rem de espacio */
+            height: calc(100vh - 1.5rem); 
+            max-width: 1200px; 
+            /* 1.5rem arriba, centrado a los lados, 0 abajo */
+            margin: 1.5rem auto 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #f8f9fa; 
+            box-shadow: 0 0 25px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+            position: relative; 
+            /* Redondeamos un poco las esquinas superiores para que se vea elegante */
+            border-radius: 15px 15px 0 0; 
+        }
+        
+        .main-scroll-area { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 1rem; }
+        
+        /* 3. Navbar pegado al fondo */
+        .navbar-fixed-bottom { flex-shrink: 0; z-index: 1000; background-color: #ffffff; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
 
-@section('content')
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="hero app-header">
-          <div class="header-inner">
-            <a href="{{ route('admin.cuenta') }}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
-            <h2>Reporte de movimientos — Hoy</h2>
-          </div>
+        .header-hero { background: #003b5c; color: white; padding: 1.5rem 1.5rem 2rem 1.5rem; border-radius: 0 0 25px 25px; margin-bottom: 0; }
+        .table th { background-color: #f1f3f5; color: #495057; font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="device" role="application">
+        
+        <div class="main-scroll-area">
+            <main class="header-hero d-flex align-items-center">
+                <a href="{{ route('admin.cuenta') }}" class="text-white me-3 fs-4"><i class="bi bi-arrow-left"></i></a>
+                <div>
+                    <h3 class="mb-0 fw-bold">Reportes</h3>
+                    <p class="mb-0 text-white-50">Historial de movimientos</p>
+                </div>
+            </main>
+
+            <section class="px-3 position-relative z-1" style="margin-top: 1rem;">
+                <div class="container-sm px-0">
+                    
+                    {{-- BÚSQUEDA --}}
+                    <div class="card shadow-sm border-0 rounded-3 mb-3">
+                        <div class="card-body p-3">
+                            <form method="GET" action="{{ route('admin.cuenta.reporte') }}" id="formReporte">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-12 col-md-5">
+                                        <label class="form-label fw-bold text-dark small mb-1">Buscar Fecha</label>
+                                        <input name="fecha" type="date" class="form-control bg-light py-2" value="{{ $fecha }}" onchange="document.getElementById('formReporte').submit()">
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2">Buscar</button>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <button type="button" id="exportCsv" class="btn btn-outline-secondary w-100 fw-bold py-2">CSV <i class="bi bi-download ms-1"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- RESUMEN --}}
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="card shadow-sm border-0 rounded-3 bg-white h-100">
+                                <div class="card-body p-3 text-center">
+                                    <h6 class="text-muted small fw-bold mb-1">Movimientos</h6>
+                                    <h4 class="fw-bold text-dark mb-0">{{ $movimientos->count() }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card shadow-sm border-0 rounded-3 bg-white border-bottom border-success border-4 h-100">
+                                <div class="card-body p-3 text-center">
+                                    <h6 class="text-muted small fw-bold mb-1">Ingresos Caja</h6>
+                                    <h4 class="fw-bold text-success mb-0">$ {{ number_format($totalIngresos, 2) }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- TABLA --}}
+                    <div class="card shadow-sm border-0 rounded-3 overflow-hidden mb-4">
+                        <div class="table-responsive">
+                            <table id="movTable" class="table table-hover mb-0 align-middle small bg-white">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-3 py-3">Hora</th>
+                                        <th class="py-3">Tipo</th>
+                                        <th class="py-3">Usuario</th>
+                                        <th class="text-end pe-3 py-3">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($movimientos as $mov)
+                                        <tr>
+                                            <td class="ps-3 text-muted fw-bold">{{ \Carbon\Carbon::parse($mov->created_at)->format('H:i') }}</td>
+                                            <td><span class="badge {{ $mov->type == 'Depósito' ? 'bg-success' : 'bg-primary' }}">{{ $mov->type }}</span></td>
+                                            <td class="fw-bold text-dark">{{ $mov->user->first_name }}</td>
+                                            <td class="text-end pe-3 fw-bold {{ $mov->type == 'Depósito' ? 'text-success' : 'text-primary' }}">
+                                                {{ $mov->type == 'Depósito' ? '+' : '-' }}{{ number_format($mov->amount, 0) }} pts
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="4" class="text-center py-5 text-muted">No hay movimientos registrados.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
 
-        <section class="px-3 py-3 content-section">
-          <div class="padded container-max">
+        <div class="navbar-fixed-bottom">
+            @include('partials.admin_navbar', ['activeTab' => 'cuenta'])
+        </div>
 
-            <div class="row mb-3">
-              <div class="col-md-4">
-                <label class="form-label">Fecha</label>
-                <input id="fecha_reporte" type="date" class="form-control" value="{{ date('Y-m-d') }}">
-              </div>
-              <div class="col-md-8 d-flex align-items-end justify-content-end">
-                <button id="generarReporte" class="btn btn-danger rounded-pill px-4 ms-2">Generar reporte</button>
-                <button id="exportCsv" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Exportar CSV</button>
-              </div>
-            </div>
-
-            <div id="reportSummary" class="mb-3">
-              <div class="card p-3">
-                <div class="d-flex justify-content-between">
-                  <div><strong>Total movimientos:</strong> <span id="total_mov">0</span></div>
-                  <div><strong>Total crédito agregado:</strong> <span id="total_creditos">0</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="table-responsive">
-              <table id="movTable" class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Hora</th>
-                    <th>Tipo</th>
-                    <th>Usuario</th>
-                    <th>Detalle</th>
-                    <th>Monto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- filas generadas por JS -->
-                </tbody>
-              </table>
-            </div>
-
-            <p class="note">Esto es una vista simulada. Cuando integre el backend, el botón "Generar reporte" pedirá los datos reales del servidor.</p>
-
-          </div>
-        </section>
-
-      </div>
     </div>
-  </div>
 
-  <script>
-    function sampleMovements(date){
-      // Simulated movements for demonstration
-      return [
-        {hora:'08:05', tipo:'Compra', usuario:'Juan Pérez', detalle:'Desayuno', monto:25},
-        {hora:'09:12', tipo:'Depósito', usuario:'María López', detalle:'Créditos', monto:150},
-        {hora:'12:03', tipo:'Compra', usuario:'Carlos Díaz', detalle:'Comida', monto:35},
-        {hora:'13:20', tipo:'Depósito', usuario:'Ana Ruiz', detalle:'Créditos', monto:200}
-      ];
-    }
-
-    function renderTable(rows){
-      var tbody = document.querySelector('#movTable tbody');
-      tbody.innerHTML = '';
-      var totalMov = rows.length;
-      var totalCred = 0;
-      rows.forEach(function(r){
-        var tr = document.createElement('tr');
-        tr.innerHTML = '<td>'+r.hora+'</td><td>'+r.tipo+'</td><td>'+r.usuario+'</td><td>'+r.detalle+'</td><td>'+r.monto+'</td>';
-        tbody.appendChild(tr);
-        if(r.tipo === 'Depósito') totalCred += r.monto;
-      });
-      document.getElementById('total_mov').textContent = totalMov;
-      document.getElementById('total_creditos').textContent = totalCred;
-    }
-
-    document.getElementById('generarReporte').addEventListener('click', function(){
-      var date = document.getElementById('fecha_reporte').value;
-      var rows = sampleMovements(date);
-      renderTable(rows);
-    });
-
-    document.getElementById('exportCsv').addEventListener('click', function(){
-      var rows = [];
-      document.querySelectorAll('#movTable tbody tr').forEach(function(tr){
-        var cols = Array.from(tr.querySelectorAll('td')).map(td=>td.textContent.trim());
-        rows.push(cols);
-      });
-      if(rows.length===0){ alert('No hay datos para exportar'); return; }
-      var csv = 'Hora,Tipo,Usuario,Detalle,Monto\n' + rows.map(r=>r.join(',')).join('\n');
-      var blob = new Blob([csv], {type:'text/csv'});
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'reporte_movimientos_'+document.getElementById('fecha_reporte').value+'.csv';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    });
-  </script>
-
-@endsection
+    <script>
+        document.getElementById('exportCsv').addEventListener('click', function(){
+            var rows = [];
+            document.querySelectorAll('#movTable tbody tr').forEach(function(tr){
+                if(tr.cells.length > 1) {
+                    var cols = Array.from(tr.querySelectorAll('td')).map(td=>td.textContent.trim());
+                    rows.push(cols);
+                }
+            });
+            if(rows.length===0){ alert('No hay datos para exportar.'); return; }
+            var csv = '\uFEFFHora,Tipo,Usuario,Monto\n' + rows.map(r=>r.join(',')).join('\n');
+            var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'Reporte_Comelobos_{{ $fecha }}.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+    </script>
+</body>
+</html>

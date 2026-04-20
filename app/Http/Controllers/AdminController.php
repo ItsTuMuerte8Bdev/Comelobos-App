@@ -134,12 +134,44 @@ class AdminController extends Controller
 
     public function cuentaAjustes()
     {
-        return view('admin.ajustes');
+        // Leemos la memoria caché. Si no hay nada guardado, por defecto será 150
+        $aforoDesayuno = \Illuminate\Support\Facades\Cache::get('aforo_desayuno', 150);
+        $aforoComida = \Illuminate\Support\Facades\Cache::get('aforo_comida', 150);
+        
+        return view('admin.ajustes', compact('aforoDesayuno', 'aforoComida'));
     }
 
-    public function cuentaReporte()
+    // Guarda los nuevos aforos
+    public function storeAjustes(\Illuminate\Http\Request $request)
     {
-        return view('admin.reporte_movimientos');
+        $request->validate([
+            'aforo_desayuno' => ['required', 'integer', 'min:1'],
+            'aforo_comida' => ['required', 'integer', 'min:1'],
+        ]);
+
+        // Guardamos los valores en la memoria permanente del servidor
+        \Illuminate\Support\Facades\Cache::forever('aforo_desayuno', $request->aforo_desayuno);
+        \Illuminate\Support\Facades\Cache::forever('aforo_comida', $request->aforo_comida);
+
+        return back()->with('success', '¡Ajustes guardados! Estos serán los nuevos valores por defecto al publicar el menú.');
+    }
+
+    public function cuentaReporte(\Illuminate\Http\Request $request)
+    {
+        // Obtenemos la fecha seleccionada en el filtro o usamos la de hoy por defecto
+        $fecha = $request->input('fecha', date('Y-m-d')); 
+
+        // Buscamos los movimientos vinculados con sus usuarios para esa fecha
+        $movimientos = \App\Models\Movement::with('user')
+            ->whereDate('created_at', $fecha)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Calculamos la suma de todos los depósitos realizados en caja
+        $totalIngresos = $movimientos->where('type', 'Depósito')->sum('amount');
+
+        // Enviamos las variables a la vista reporte_movimientos
+        return view('admin.reporte_movimientos', compact('movimientos', 'fecha', 'totalIngresos'));
     }
 
     // ==========================================

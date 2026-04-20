@@ -139,7 +139,7 @@
                                         </div>
                                         <div class="col-4">
                                             <label class="form-label-custom">Porciones</label>
-                                            <input type="number" name="available_portions" class="form-control border-secondary bg-light" placeholder="Ej. 50" min="1" value="{{ old('type') == 'desayuno' ? old('available_portions') : '' }}" required>
+                                            <input type="number" name="available_portions" class="form-control border-secondary bg-light" value="{{ \Illuminate\Support\Facades\Cache::get('aforo_desayuno', 150) }}">
                                             @error('available_portions','desayuno') <small class="text-danger">{{ $message }}</small> @enderror
                                         </div>
                                     </div>
@@ -214,7 +214,7 @@
                                         </div>
                                         <div class="col-4">
                                             <label class="form-label-custom">Porciones</label>
-                                            <input type="number" name="available_portions" class="form-control border-secondary bg-light" placeholder="Ej. 50" min="1" value="{{ old('type') == 'comida' ? old('available_portions') : '' }}" required>
+                                            <input type="number" name="available_portions" class="form-control border-secondary bg-light" value="{{ \Illuminate\Support\Facades\Cache::get('aforo_comida', 10) }}">
                                             @error('available_portions','comida') <small class="text-danger">{{ $message }}</small> @enderror
                                         </div>
                                     </div>

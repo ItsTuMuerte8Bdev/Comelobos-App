@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/cuenta', [\App\Http\Controllers\AdminController::class, 'cuenta'])->name('admin.cuenta');
         Route::get('/cuenta/informacion', [\App\Http\Controllers\AdminController::class, 'cuentaInformacion'])->name('admin.cuenta.informacion');
         Route::get('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'cuentaAjustes'])->name('admin.cuenta.ajustes');
+        Route::post('/cuenta/ajustes', [\App\Http\Controllers\AdminController::class, 'storeAjustes'])->name('admin.cuenta.ajustes.store');
         Route::get('/cuenta/reporte', [\App\Http\Controllers\AdminController::class, 'cuentaReporte'])->name('admin.cuenta.reporte');
         
         // Asignación de Roles
