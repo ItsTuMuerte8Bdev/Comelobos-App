@@ -22,10 +22,8 @@
         
         /* 2. Contenedor Central con el espacio superior */
         .device { 
-            /* TRUCO: Altura total menos 1.5rem de espacio */
             height: calc(100vh - 1.5rem); 
             max-width: 1200px; 
-            /* 1.5rem arriba, centrado a los lados, 0 abajo */
             margin: 1.5rem auto 0 auto; 
             display: flex; 
             flex-direction: column; 
@@ -33,7 +31,6 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.1); 
             overflow: hidden; 
             position: relative; 
-            /* Redondeamos un poco las esquinas superiores para que se vea elegante */
             border-radius: 15px 15px 0 0; 
         }
         
@@ -61,19 +58,18 @@
             <section class="px-3 position-relative z-1" style="margin-top: 1rem;">
                 <div class="container-sm px-0">
                     
-                    {{-- BÚSQUEDA --}}
+                    {{-- BÚSQUEDA (Sin botón extra) --}}
                     <div class="card shadow-sm border-0 rounded-3 mb-3">
                         <div class="card-body p-3">
                             <form method="GET" action="{{ route('admin.cuenta.reporte') }}" id="formReporte">
                                 <div class="row g-2 align-items-end">
-                                    <div class="col-12 col-md-5">
+                                    {{-- El input toma más espacio (col-4) --}}
+                                    <div class="col-8 col-md-9">
                                         <label class="form-label fw-bold text-dark small mb-1">Buscar Fecha</label>
                                         <input name="fecha" type="date" class="form-control bg-light py-2" value="{{ $fecha }}" onchange="document.getElementById('formReporte').submit()">
                                     </div>
-                                    <div class="col-6 col-md-4">
-                                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2">Buscar</button>
-                                    </div>
-                                    <div class="col-6 col-md-3">
+                                    {{-- El botón CSV toma el resto (col-8) --}}
+                                    <div class="col-4 col-md-3">
                                         <button type="button" id="exportCsv" class="btn btn-outline-secondary w-100 fw-bold py-2">CSV <i class="bi bi-download ms-1"></i></button>
                                     </div>
                                 </div>
@@ -109,6 +105,7 @@
                                     <tr>
                                         <th class="ps-3 py-3">Hora</th>
                                         <th class="py-3">Tipo</th>
+                                        <th class="py-3">Matrícula</th>
                                         <th class="py-3">Usuario</th>
                                         <th class="text-end pe-3 py-3">Monto</th>
                                     </tr>
@@ -118,9 +115,10 @@
                                         <tr>
                                             <td class="ps-3 text-muted fw-bold">{{ \Carbon\Carbon::parse($mov->created_at)->format('H:i') }}</td>
                                             <td><span class="badge {{ $mov->type == 'Depósito' ? 'bg-success' : 'bg-primary' }}">{{ $mov->type }}</span></td>
-                                            <td class="fw-bold text-dark">{{ $mov->user->first_name }}</td>
+                                            <td class="fw-bold text-dark">{{ $mov->user->matriculation_number }}</td>
+                                            <td class="fw-bold text-dark">{{ $mov->user->first_name }} {{ $mov->user->last_name }} {{ $mov->user->second_last_name }}</td>
                                             <td class="text-end pe-3 fw-bold {{ $mov->type == 'Depósito' ? 'text-success' : 'text-primary' }}">
-                                                {{ $mov->type == 'Depósito' ? '+' : '-' }}{{ number_format($mov->amount, 0) }} pts
+                                                {{ $mov->type == 'Depósito' ? '+' : '-' }}{{ number_format($mov->amount, 2) }}
                                             </td>
                                         </tr>
                                     @empty
@@ -150,7 +148,7 @@
                 }
             });
             if(rows.length===0){ alert('No hay datos para exportar.'); return; }
-            var csv = '\uFEFFHora,Tipo,Usuario,Monto\n' + rows.map(r=>r.join(',')).join('\n');
+            var csv = '\uFEFFHora,Tipo,Matrícula,Usuario,Monto\n' + rows.map(r=>r.join(',')).join('\n');
             var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a');

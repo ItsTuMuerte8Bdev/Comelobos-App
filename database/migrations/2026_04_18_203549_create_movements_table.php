@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('movements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->string('type');
+            $table->string('details');
+            $table->decimal('amount', 8, 2);
             $table->timestamps();
         });
     }

@@ -114,6 +114,14 @@ class AdminController extends Controller
         $usuario->credits += $request->amount;
         $usuario->save();
 
+        // ====== NUEVO: IMPRIMIR EL RECIBO DE DEPÓSITO ======
+        \App\Models\Movement::create([
+            'user_id' => $usuario->id,
+            'type' => 'Depósito',
+            'details' => 'Recarga de saldo en caja',
+            'amount' => $request->amount
+        ]);
+
         // Redirigimos de vuelta con la misma matrícula para que vea el nuevo saldo en pantalla
         return redirect()->route('admin.creditos', ['matricula' => $usuario->matriculation_number])
                          ->with('success', '¡Transacción exitosa! Se han depositado $' . number_format($request->amount, 2) . ' a ' . $usuario->first_name . '.');

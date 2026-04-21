@@ -81,6 +81,13 @@ class ReservationController extends Controller {
 
             $menu->decrement('available_portions');
             if ($menu->available_portions == 0) $menu->update(['status' => 'unavailable']);
+
+            \App\Models\Movement::create([
+                'user_id' => $user->id,
+                'type' => 'Compra',
+                'details' => 'Reserva de ' . ucfirst($menu->type),
+                'amount' => $menu->price
+            ]);
         });
 
         // Regresamos a la pantalla de Inicio (donde la tarjeta se volverá amarilla)
@@ -126,6 +133,13 @@ class ReservationController extends Controller {
             if ($reservation->shift->status === 'full') {
                 $reservation->shift->update(['status' => 'open']);
             }
+
+            \App\Models\Movement::create([
+                'user_id' => $user->id,
+                'type' => 'Reembolso',
+                'details' => 'Cancelación de ' . ucfirst($reservation->menu->type),
+                'amount' => $reservation->menu->price
+            ]);
         });
 
         return back()->with('success', '¡Reserva cancelada! Tus ' . number_format($reservation->menu->price, 0) . ' pts han sido devueltos a tu cuenta.');
