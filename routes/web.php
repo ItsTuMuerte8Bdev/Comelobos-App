@@ -127,6 +127,6 @@ Route::middleware('auth')->group(function () {
         return view('checkin', compact('reservas'));
     })->name('checkin');
 
-    // Logout mediante AutenticarController. Cierra sesión y redirige.
+    // Logout mediante AutenticarController.
     Route::post('/login', [AutenticarController::class, 'logout'])->name('logout');
 });
