@@ -85,36 +85,57 @@ class AdminController extends Controller
         return back()->with('success', '¡Check-In exitoso! Platillo marcado como entregado.');
     }
 
-    public function creditos(Request $request)
+    public function creditos(\Illuminate\Http\Request $request)
     {
         $usuario = null;
-        
-        if ($request->filled('matricula')) {
-            $usuario = \App\Models\User::where('matriculation_number', $request->matricula)->first();
+        $matricula = $request->input('matricula');
+
+        if ($matricula) {
             
+            if (!is_numeric($matricula)) {
+                return redirect()->route('admin.creditos')
+                                 ->withErrors(['matricula' => 'Formato inválido. La matrícula debe contener únicamente números.']);
+            }
+
+            $usuario = \App\Models\User::where('matriculation_number', $matricula)->first();
+
             if (!$usuario) {
-                return back()->withErrors('No se encontró ningún usuario con esa matrícula.');
+                return redirect()->route('admin.creditos')
+                                 ->withErrors(['matricula' => 'No se encontró ningún alumno registrado con esa matrícula.']);
+            }
+
+            // ====== NUEVO CANDADO 1: BLOQUEAR BÚSQUEDA DE ADMINS ======
+            // Usamos 'admin' y 'administrativo' por si acaso tienes ambas nomenclaturas
+            if ($usuario->role === 'admin' || $usuario->role === 'administrativo') {
+                return redirect()->route('admin.creditos')
+                                 ->withErrors(['matricula' => 'Acción denegada. No puedes abonar créditos a un perfil administrativo.']);
             }
         }
-        
+
         return view('admin.creditos', compact('usuario'));
     }
 
     // 2. Procesar el depósito de créditos
-    public function addCreditos(Request $request)
+    public function addCreditos(\Illuminate\Http\Request $request)
     {
         $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'amount' => ['required', 'numeric', 'min:1', 'max:5000'] // Límite de seguridad
+            'amount' => ['required', 'numeric', 'min:1', 'max:5000']
         ]);
 
         $usuario = \App\Models\User::findOrFail($request->user_id);
-        
+
+        // ====== NUEVO CANDADO 2: SEGURIDAD ESTRICTA ANTES DE GUARDAR ======
+        if ($usuario->role === 'admin' || $usuario->role === 'administrativo') {
+            return redirect()->route('admin.creditos')
+                             ->withErrors(['matricula' => 'Error de seguridad: Intento de abono a cuenta administrativa bloqueado.']);
+        }
+
         // Sumamos los créditos
         $usuario->credits += $request->amount;
         $usuario->save();
 
-        // ====== NUEVO: IMPRIMIR EL RECIBO DE DEPÓSITO ======
+        // Imprimimos el recibo
         \App\Models\Movement::create([
             'user_id' => $usuario->id,
             'type' => 'Depósito',
@@ -122,7 +143,6 @@ class AdminController extends Controller
             'amount' => $request->amount
         ]);
 
-        // Redirigimos de vuelta con la misma matrícula para que vea el nuevo saldo en pantalla
         return redirect()->route('admin.creditos', ['matricula' => $usuario->matriculation_number])
                          ->with('success', '¡Transacción exitosa! Se han depositado $' . number_format($request->amount, 2) . ' a ' . $usuario->first_name . '.');
     }
@@ -157,11 +177,43 @@ class AdminController extends Controller
             'aforo_comida' => ['required', 'integer', 'min:1'],
         ]);
 
-        // Guardamos los valores en la memoria permanente del servidor
+        // 1. Guardamos los valores en la memoria permanente para futuros menús
         \Illuminate\Support\Facades\Cache::forever('aforo_desayuno', $request->aforo_desayuno);
         \Illuminate\Support\Facades\Cache::forever('aforo_comida', $request->aforo_comida);
 
-        return back()->with('success', '¡Ajustes guardados! Estos serán los nuevos valores por defecto al publicar el menú.');
+
+        // =========================================================
+        // SOLUCIÓN BUG-010: Sincronizar menús activos de HOY
+        // =========================================================
+        $hoy = \Carbon\Carbon::today()->toDateString();
+
+        // Recalcular Desayuno si ya está publicado hoy
+        $menuDesayuno = \App\Models\Menu::where('type', 'Desayuno')
+            ->whereDate('created_at', $hoy)
+            ->first();
+            
+        if ($menuDesayuno) {
+            $reservasD = \App\Models\Reservation::where('menu_id', $menuDesayuno->id)->count();
+            // Nuevo cupo - Reservas actuales = Lo que realmente queda disponible
+            $menuDesayuno->available_portions = max(0, $request->aforo_desayuno - $reservasD);
+            $menuDesayuno->save();
+        }
+
+        // Recalcular Comida si ya está publicada hoy
+        $menuComida = \App\Models\Menu::where('type', 'Comida')
+            ->whereDate('created_at', $hoy)
+            ->first();
+            
+        if ($menuComida) {
+            $reservasC = \App\Models\Reservation::where('menu_id', $menuComida->id)->count();
+            // Nuevo cupo - Reservas actuales = Lo que realmente queda disponible
+            $menuComida->available_portions = max(0, $request->aforo_comida - $reservasC);
+            $menuComida->save();
+        }
+        // =========================================================
+
+
+        return back()->with('success', '¡Ajustes guardados! Los cupos disponibles para hoy se han actualizado correctamente.');
     }
 
     public function cuentaReporte(\Illuminate\Http\Request $request)

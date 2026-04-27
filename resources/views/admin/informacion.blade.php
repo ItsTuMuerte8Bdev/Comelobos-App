@@ -1,104 +1,90 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Comelobos | Información personal</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    </head>
-    <body>
-        <div class="device" role="application">
-            <main class="hero app-header">
-                <div class="header-inner">
-                    <a href="{{ route('admin.cuenta') }}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
-                    <h2>Información personal</h2>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Comelobos Admin | Información</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <style>
+        /* 1. Reseteo ABSOLUTO */
+        html, body { height: 100vh; width: 100%; overflow: hidden; background-color: #e9ecef; margin: 0 !important; padding: 0 !important; }
+        
+        /* 2. Contenedor Central Caja Fuerte */
+        .device { height: calc(100vh - 1.5rem); max-width: 1200px; margin: 1.5rem auto 0 auto; display: flex; flex-direction: column; background-color: #f8f9fa; box-shadow: 0 0 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; border-radius: 15px 15px 0 0; }
+        .main-scroll-area { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 1rem; }
+        
+        /* 3. Navbar y Header */
+        .navbar-fixed-bottom { flex-shrink: 0; z-index: 1000; background-color: #ffffff; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+        .header-hero { background: #003b5c; color: white; padding: 1.5rem 1.5rem 2rem 1.5rem; border-radius: 0 0 25px 25px; margin-bottom: 0; }
+    </style>
+</head>
+<body>
+    <div class="device" role="application">
+        
+        <div class="main-scroll-area">
+            <main class="header-hero d-flex align-items-center">
+                <a href="{{ route('admin.cuenta') }}" class="text-white me-3 fs-4"><i class="bi bi-arrow-left"></i></a>
+                <div>
+                    <h3 class="mb-0 fw-bold">Información</h3>
+                    <p class="mb-0 text-white-50">Tus datos personales</p>
                 </div>
             </main>
 
-            <section class="px-3 py-3 content-section">
-                <div class="padded">
-                    <form id="infoForm">
-                        <div class="field mb-3">
-                            <label class="form-label">ID o Matrícula</label>
-                            <input type="text" class="form-control" value="{{ Auth::user()->matriculation_number }}" disabled>
-                        </div>
-                        <div class="field mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" value="{{ Auth::user()->first_name }}" disabled>
-                        </div>
-                        <div class="field mb-3">
-                            <label class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" value="{{ Auth::user()->last_name }} {{ Auth::user()->second_last_name }}" disabled>
-                        </div>
-                        <div class="field mb-3">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" value="{{ Auth::user()->phone }}" disabled>
-                        </div>
-                        <div class="field mb-3">
-                            <label class="form-label">Correo Institucional</label>
-                            <input type="email" class="form-control" value="{{ Auth::user()->email }}" disabled>
-                        </div>
+            <section class="px-3 position-relative z-1" style="margin-top: 1rem;">
+                <div class="container-sm px-0">
+                    <div class="card shadow-sm border-0 rounded-3 mb-4">
+                        <div class="card-body p-4">
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold mb-1">ID o Matrícula</label>
+                                <input type="text" class="form-control bg-light" value="{{ Auth::user()->matriculation_number }}" readonly disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold mb-1">Nombre</label>
+                                <input type="text" class="form-control bg-light" value="{{ Auth::user()->first_name }}" readonly disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold mb-1">Apellidos</label>
+                                <input type="text" class="form-control bg-light" value="{{ Auth::user()->last_name }} {{ Auth::user()->second_last_name }}" readonly disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold mb-1">Teléfono</label>
+                                <input type="text" class="form-control bg-light" value="{{ Auth::user()->phone }}" readonly disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold mb-1">Correo Institucional</label>
+                                <input type="text" class="form-control bg-light" value="{{ Auth::user()->email }}" readonly disabled>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-bold mb-1">Créditos</label>
+                                <input type="text" class="form-control bg-light" value="{{ number_format(Auth::user()->credits, 2) }}" readonly disabled>
+                            </div>
 
-                        <div class="field mb-3">
-                            <label class="form-label">Créditos</label>
-                            <input type="text" class="form-control" value="{{ number_format(Auth::user()->credits, 2) }}" disabled>
+                            {{-- Botón para cambiar contraseña --}}
+                            <button type="button" class="btn btn-dark w-100 fw-bold py-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                Cambiar Contraseña
+                            </button>
+
                         </div>
-                    </form>
-
-                    {{-- Mensaje de éxito al cambiar contraseña --}}
-                    @if(session('success_password'))
-                        <div class="alert alert-success">{{ session('success_password') }}</div>
-                    @endif
-
-                    @include('partials.change_password', ['scope' => 'user'])
+                    </div>
                 </div>
             </section>
-
-            @include('partials.navbar', ['activeTab' => 'cuenta'])
         </div>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-                <!-- Modales de confirmación -->
-                <div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body text-center">
-                                <p>¿Estas seguro de querer actualizar tus datos?</p>
-                                <div class="d-flex justify-content-center gap-2 mt-3">
-                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirmar</button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Regresar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="navbar-fixed-bottom">
+            {{-- AQUÍ ESTÁ LA MAGIA: Forzamos el navbar del administrador --}}
+            @include('partials.admin_navbar', ['activeTab' => 'cuenta'])
+        </div>
 
-                <div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body text-center">
-                                <p>Regresaran los datos a su estado antes de modificarlos, ¿Estas de acuerdo?</p>
-                                <div class="d-flex justify-content-center gap-2 mt-3">
-                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirmar</button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Regresar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    // Save / reset modals only
-                    document.getElementById('saveBtn').addEventListener('click', function(){
-                        var modal = new bootstrap.Modal(document.getElementById('saveModal'));
-                        modal.show();
-                    });
-                    document.getElementById('resetBtn').addEventListener('click', function(){
-                        var modal = new bootstrap.Modal(document.getElementById('resetModal'));
-                        modal.show();
-                    });
-                </script>
-    </body>
+    </div>
+</body>
 </html>

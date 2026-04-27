@@ -56,7 +56,7 @@
                                         <button type="submit" class="btn btn-dark w-100 fw-bold shadow-sm">Buscar</button>
                                     </div>
                                     <div class="col-6">
-                                        <a href="{{ route('admin.creditos') }}" class="btn btn-outline-dark w-100 fw-bold">Deshacer</a>
+                                        <a href="{{ route('admin.creditos') }}" class="btn btn-outline-dark w-100 fw-bold">Borrar</a>
                                     </div>
                                 </div>
                             </form>
@@ -99,7 +99,7 @@
 
                                     <div class="row g-2">
                                         <div class="col-6">
-                                            <button type="button" class="btn btn-outline-secondary w-100 fw-bold" onclick="document.getElementById('input_monto').value = ''">Deshacer</button>
+                                            <button type="button" class="btn btn-outline-secondary w-100 fw-bold" onclick="document.getElementById('input_monto').value = ''">Borrar</button>
                                         </div>
                                         <div class="col-6">
                                             <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm" onclick="return confirmarDeposito(event)">

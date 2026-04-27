@@ -78,7 +78,7 @@
                 @if($dataDesayuno)
                     <div class="card shadow-sm border-0 rounded-4 mb-4 mt-3">
                         @if($dataDesayuno->image_path)
-                            <img src="{{ $dataDesayuno->image_path }}" class="menu-image" alt="Desayuno">
+                            <img src="{{ asset('storage/' . $dataDesayuno->image_path) }}" class="menu-image" alt="Desayuno">
                         @else
                             <div class="menu-image bg-secondary d-flex align-items-center justify-content-center text-white">
                                 <i class="bi bi-camera fs-1"></i>
@@ -166,7 +166,7 @@
                 @if($dataComida)
                     <div class="card shadow-sm border-0 rounded-4 mb-4 mt-3">
                         @if($dataComida->image_path)
-                            <img src="{{ $dataComida->image_path }}" class="menu-image" alt="Comida">
+                            <img src="{{ asset('storage/' . $dataComida->image_path) }}" class="menu-image" alt="Comida">
                         @else
                             <div class="menu-image bg-secondary d-flex align-items-center justify-content-center text-white">
                                 <i class="bi bi-camera fs-1"></i>
