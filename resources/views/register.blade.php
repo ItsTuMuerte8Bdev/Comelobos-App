@@ -114,7 +114,7 @@
                 @enderror
  
             <label for="phone">Teléfono</label>
-            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" value="{{ old('phone') }}">
+            <input id="phone" name="phone" type="tel" inputmode="numeric" pattern="\\d{10}" maxlength="10" placeholder="5512345678" value="{{ old('phone') }}">
                 @error('phone')
                     <div style="color: red; font-size: 12px; font-weight: normal; text-align: right;">
                         {{ $message }}
@@ -143,5 +143,34 @@
         <div class="muted">Al registrarte aceptas nuestra Política de Privacidad y Términos y Condiciones</div>
     </div>
 </div>
+</div>
+<script>
+    // Evitar que el usuario ingrese caracteres no numéricos en el campo Teléfono
+    document.addEventListener('DOMContentLoaded', function () {
+        const phone = document.getElementById('phone');
+        if (!phone) return;
+
+        // Filtrar en cada entrada: eliminar todo lo que no sea dígito
+        phone.addEventListener('input', function (e) {
+            const cursor = this.selectionStart;
+            const digits = this.value.replace(/\D+/g, '');
+            this.value = digits.slice(0, 10); // limitar a 10 dígitos
+            // Intentar mantener la posición del cursor
+            try { this.setSelectionRange(cursor, cursor); } catch (err) { }
+        });
+
+        // Al pegar, tomar solo dígitos
+        phone.addEventListener('paste', function (e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+            const digits = text.replace(/\D+/g, '').slice(0, 10);
+            // Insertar los dígitos en la posición actual del cursor
+            const start = this.selectionStart || 0;
+            const end = this.selectionEnd || 0;
+            const newValue = (this.value.slice(0, start) + digits + this.value.slice(end)).replace(/\D+/g, '').slice(0, 10);
+            this.value = newValue;
+        });
+    });
+</script>
 </body>
 </html>

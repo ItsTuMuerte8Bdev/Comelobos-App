@@ -18,7 +18,7 @@
             </main>
 
             <section class="px-3 py-3 content-section">
-                <div class="padded container-max text-primary-dark">
+                <div class="padded container-max text-primary-dark contacts-card">
                     <h1 class="page-heading">Directorio — Comedor Universitario CU</h1>
 
                     <h5 class="section-heading">DIRECCIÓN</h5>

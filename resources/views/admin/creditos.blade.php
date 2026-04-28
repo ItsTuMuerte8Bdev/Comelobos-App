@@ -117,18 +117,19 @@
                             function confirmarDeposito(event) {
                                 const monto = document.getElementById('input_monto').value;
                                 const nombre = "{{ $usuario->first_name }} {{ $usuario->last_name }} {{ $usuario->second_last_name }}";
-                                
                                 if (!monto || monto <= 0) {
-                                    return true; // Deja que el navegador lance el error de "campo requerido"
+                                    return true; // deja que el navegador maneje la validación
                                 }
 
                                 const mensaje = `¿Estás seguro de que deseas depositar ${monto} créditos a la cuenta de ${nombre}?`;
-                                
-                                if (!confirm(mensaje)) {
-                                    event.preventDefault(); // Detiene el envío
-                                    return false;
+                                event.preventDefault();
+                                // Usar modal global para confirmar (con fallback si no está definido)
+                                if (typeof window.showConfirmModal === 'function') {
+                                    window.showConfirmModal(mensaje, 'Confirmar depósito').then(function(ok){ if (ok) event.target.closest('form').submit(); });
+                                } else {
+                                    if (confirm(mensaje)) event.target.closest('form').submit();
                                 }
-                                return true; // Procesa el pago
+                                return false;
                             }
                         </script>
                     @endif
@@ -143,5 +144,9 @@
         </div>
 
     </div>
-</body>
-</html>
+        @include('partials.confirm_modal')
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{{ asset('js/global_modals.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
+    </body>
+    </html>

@@ -50,6 +50,10 @@
                 <div>
                     <h2 class="fw-bold mb-1">¡Hola {{ Auth::user()->first_name }}!</h2>
                     <p class="mb-0 text-white-50">¿Qué se te antoja hoy?</p>
+                @include('partials.confirm_modal')
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="{{ asset('js/global_modals.js') }}"></script>
+                <script src="{{ asset('js/app.js') }}"></script>
                 </div>
                 <div class="credits-badge">
                     <i class="bi bi-coin me-1"></i> {{ number_format(Auth::user()->credits, 2) }}
@@ -122,7 +126,7 @@
                                             <i class="bi bi-check-circle-fill me-1"></i> Reservado
                                         </button>
 
-                                        <form action="{{ route('api.reserva.cancel', $reservaDesayuno->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas cancelar tu reserva? Te devolveremos tus {{ number_format($reservaDesayuno->menu->price, 2) }}')">
+                                        <form action="{{ route('api.reserva.cancel', $reservaDesayuno->id) }}" method="POST" class="needs-confirm" data-confirm-message="¿Estás seguro que deseas cancelar tu reserva? Te devolveremos tus {{ number_format($reservaDesayuno->menu->price, 2) }}">
                                             @csrf
                                             <button type="submit" class="btn btn-soft-red w-100 fw-bold rounded-pill py-2 shadow-sm">
                                                 <i class="bi bi-x-circle me-1"></i> Cancelar mi reserva
@@ -210,7 +214,7 @@
                                             <i class="bi bi-check-circle-fill me-1"></i> Reservado
                                         </button>
 
-                                        <form action="{{ route('api.reserva.cancel', $reservaComida->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas cancelar tu reserva? Te devolveremos tus {{ number_format($reservaComida->menu->price, 0) }}')">
+                                        <form action="{{ route('api.reserva.cancel', $reservaComida->id) }}" method="POST" class="needs-confirm" data-confirm-message="¿Estás seguro que deseas cancelar tu reserva? Te devolveremos tus {{ number_format($reservaComida->menu->price, 0) }}">
                                             @csrf
                                             <button type="submit" class="btn btn-soft-red w-100 fw-bold rounded-pill py-2 shadow-sm">
                                                 <i class="bi bi-x-circle me-1"></i> Cancelar mi reserva

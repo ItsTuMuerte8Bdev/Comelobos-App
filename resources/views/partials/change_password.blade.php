@@ -129,7 +129,8 @@
             } else if (modalEl) {
               modalEl.classList.add('show'); modalEl.style.display = 'block';
             } else {
-              alert('Confirmación: formulario listo para enviar (sin modal)');
+              if (typeof window.showAlertModal === 'function') window.showAlertModal('Confirmación: formulario listo para enviar');
+              else window.showAlertModal('Confirmación: formulario listo para enviar');
             }
           }
         });

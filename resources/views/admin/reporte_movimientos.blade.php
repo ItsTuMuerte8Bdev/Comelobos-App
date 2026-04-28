@@ -147,7 +147,11 @@
                     rows.push(cols);
                 }
             });
-            if(rows.length===0){ alert('No hay datos para exportar.'); return; }
+            if(rows.length===0){
+                if (typeof window.showAlertModal === 'function') { window.showAlertModal('No hay datos para exportar.'); }
+                else { window.showAlertModal('No hay datos para exportar.'); }
+                return;
+            }
             var csv = '\uFEFFHora,Tipo,Matrícula,Usuario,Monto\n' + rows.map(r=>r.join(',')).join('\n');
             var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
             var url = URL.createObjectURL(blob);
@@ -159,5 +163,9 @@
             a.remove();
         });
     </script>
+    @include('partials.confirm_modal')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/global_modals.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

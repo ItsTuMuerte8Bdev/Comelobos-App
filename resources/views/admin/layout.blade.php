@@ -20,7 +20,9 @@
       @include('partials.admin_navbar', ['activeTab' => $activeTab ?? 'admin_home'])
     @endif
   </div>
+    @include('partials.confirm_modal')
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/global_modals.js') }}"></script>
 </body>
 </html>
