@@ -13,8 +13,17 @@
 
 /* Centralizado: reglas extraídas de vistas (mover aquí estilos inline y <style> locales) */
 
-/* Hero / headers */
 .hero{background:transparent;color:#053f56}
+/* Asegurar que cuando .hero combine con .app-header tenga fondo opaco */
+.hero.app-header{background:var(--color-primary);color:var(--color-primary-contrast)}
+/* Asegurar que el título del header sea blanco y tenga mayor prioridad */
+.hero.app-header h2{color:var(--color-primary-contrast) !important;z-index:2;text-shadow:0 1px 0 rgba(0,0,0,0.12)}
+/* Ajustes: hacer el header compacto y centrar el título verticalmente */
+.hero.app-header{padding:0.7rem 1rem !important;align-items:center}
+.hero.app-header .header-inner{justify-content:center}
+/* Mantener el contenedor relativo para posicionar el botón de regreso sin afectar el flujo */
+.app-header .header-inner{position:relative}
+.hero.app-header .header-inner h2{margin:0;line-height:1;font-size:1.2rem}
 .hero--sm{padding:1.25rem 1rem}
 .hero--lg{padding:1.5rem}
 .app-header{padding-top:16px !important}
@@ -30,7 +39,7 @@
 .text-primary-dark{color:#064253}
 
 /* Buttons, links and small UI pieces */
-.back-btn{background:#48b8e6;color:white;border-radius:10px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;margin-right:auto}
+.back-btn{background:#48b8e6;color:white;border-radius:10px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;position:absolute;left:12px;top:6px;margin-right:0;border:none}
 .settings-link{display:block;margin:16px 0;color:#28d1d8;font-weight:600;text-decoration:none}
 .note{margin-top:40px;text-align:center;color:var(--color-muted)}
 .contact-line{margin:8px 0}

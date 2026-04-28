@@ -4,6 +4,12 @@
 body{background:var(--color-bg);display:flex;align-items:center;justify-content:center;padding:18px}
 .device{width:min(420px,92vw);height:min(820px,96vh);background:var(--color-surface);border-radius:8px;overflow:auto;box-shadow:0 10px 30px var(--color-shadow);display:flex;flex-direction:column}
 .hero{background:transparent;color:var(--color-primary);padding:4.5rem 1rem 1.5rem;text-align:center;flex:1 1 auto;display:flex;align-items:flex-start;justify-content:center}
+/* Override: asegurar que cuando .hero combine con .app-header tenga fondo opaco
+	Esto evita que la regla .hero transparente (de orden superior) cubra
+	el estilo de .app-header definido en palette.css */
+.hero.app-header{background:var(--color-primary) !important;color:var(--color-primary-contrast) !important}
+/* Asegurar que el título del header sea blanco y tenga mayor prioridad */
+.hero.app-header h2{color:var(--color-primary-contrast) !important}
 .hero h1{margin:0;font-weight:600;font-size:clamp(1.3rem,4.8vw,2.2rem)}
 .hero p{margin:8px 0 0;font-weight:300;font-size:clamp(.85rem,2.6vw,1rem);opacity:.95}
 .nav-label{font-size:.72rem;margin-top:.25rem;color:var(--color-muted)}
@@ -300,11 +306,12 @@ label{display:block;margin:10px 0 6px;color:#222}
 	.navbar .nav-link i{transform:none}
 }
 
-/* Forzar legibilidad del título en la cabecera (Información personal) */
+/* Forzar legibilidad del título en la cabecera (usar contraste correcto sobre el fondo) */
 .app-header h2{
-	color: #053f56 !important;
+	color: var(--color-primary-contrast) !important;
 	opacity: 1 !important;
-	-webkit-text-fill-color: #053f56 !important;
+	-webkit-text-fill-color: var(--color-primary-contrast) !important;
+	text-shadow: 0 1px 0 rgba(0,0,0,0.12);
 }
 
 /* Alineación y apilamiento del header/back button */
