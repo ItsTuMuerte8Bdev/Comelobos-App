@@ -157,6 +157,13 @@ class AdminController extends Controller
 
     public function cuentaInformacion()
     {
+        // AUTENTICACIÓN: Verificamos estrictamente el rol del usuario
+        $rol = Auth::user()->role;
+        
+        if ($rol !== 'administrativo') {
+            return redirect()->route('inicio')
+                ->withErrors(['acceso' => 'Acceso denegado. Pantalla exclusiva para personal administrativo.']);
+        }
         return view('admin.informacion');
     }
 
