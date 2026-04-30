@@ -151,8 +151,7 @@
                                             </label>
                                         @endforeach
                                     </div>
-
-                                    <button type="submit" class="btn btn-dark w-100 fw-bold rounded-pill py-2 shadow-sm">
+                                    <button type="submit" id="btn-reservar" class="btn btn-secondary w-100" disabled>
                                         Reservar por ${{ $dataDesayuno->price }}
                                     </button>
                                 </form>
@@ -170,7 +169,7 @@
                 @if($dataComida)
                     <div class="card shadow-sm border-0 rounded-4 mb-4 mt-3">
                         @if($dataComida->image_path)
-                            <img src="{{ asset('storage/' . $dataComida->image_path) }}" class="menu-image" alt="Comida">
+                            <img src="{{ asset($dataComida->image_path) }}" class="menu-image" alt="Comida">
                         @else
                             <div class="menu-image bg-secondary d-flex align-items-center justify-content-center text-white">
                                 <i class="bi bi-camera fs-1"></i>
@@ -240,7 +239,7 @@
                                         @endforeach
                                     </div>
 
-                                    <button type="submit" class="btn btn-dark w-100 fw-bold rounded-pill py-2 shadow-sm">
+                                    <button type="submit" id="btn-reservar" class="btn btn-secondary w-100" disabled>
                                         Reservar por ${{ $dataComida->price }}
                                     </button>
                                 </form>
@@ -265,5 +264,34 @@
         </div>
 
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Buscamos todos los inputs de los horarios. 
+            // ⚠️ IMPORTANTE: Cambia 'shift_id' por el nombre (name="") real que tengan tus inputs de horario.
+            const horarios = document.querySelectorAll('input[type="radio"][name="shift_id"]');
+            
+            // 2. Buscamos el botón de reservar que acabamos de apagar
+            const btnReservar = document.getElementById('btn-reservar');
+
+            // 3. Le decimos a cada horario que avise cuando le den clic
+            horarios.forEach(horario => {
+                horario.addEventListener('change', function() {
+                    
+                    // Si el horario fue seleccionado...
+                    if(this.checked) {
+                        // Le quitamos el candado al botón
+                        btnReservar.disabled = false;
+                        
+                        // Le quitamos el color gris (apagado)
+                        btnReservar.classList.remove('btn-secondary');
+                        
+                        // Le ponemos tu color azul original (iluminado)
+                        // ⚠️ IMPORTANTE: Si tu azul usa otra clase como 'btn-primary', cámbiala aquí abajo
+                        btnReservar.classList.add('btn-dark'); 
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
