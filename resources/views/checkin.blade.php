@@ -118,7 +118,13 @@
                         
                         {{-- Consumo de API para generar la imagen del QR --}}
                         <div class="bg-white p-3 rounded-4 shadow-sm d-inline-block border">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={{ $reserva->qr_code }}" class="qr-image" alt="Código QR">
+                            @php
+                                $qrData = rawurlencode($reserva->qr_code);
+                                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={$qrData}&format=png&charset-source=UTF-8&charset-target=UTF-8";
+                                $svg = "<svg xmlns='http://www.w3.org/2000/svg' width='250' height='250'><rect width='100%' height='100%' fill='%23ffffff'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23cccccc' font-family='Arial' font-size='16'>QR no disponible</text></svg>";
+                                $qrFallback = 'data:image/svg+xml;utf8,' . rawurlencode($svg);
+                            @endphp
+                            <img src="{{ $qrUrl }}" class="qr-image" alt="Código QR" onerror="this.onerror=null;this.src='{{ $qrFallback }}'">
                         </div>
                         
                         <p class="mt-3 mb-0 text-secondary fw-bold font-monospace small">{{ $reserva->folio }}</p>

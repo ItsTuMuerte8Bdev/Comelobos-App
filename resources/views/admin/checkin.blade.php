@@ -187,7 +187,9 @@
         html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
         .catch(err => {
             // Si el dispositivo no tiene cámara o el usuario denegó los permisos
-            document.getElementById('reader').innerHTML = '<div class="p-5 bg-light text-danger fw-bold"><i class="bi bi-camera-video-off fs-1 d-block mb-2"></i>Por favor, permite el acceso a la cámara.</div>';
+            console.error('Error inicializando html5QrCode:', err);
+            const errDetail = (err && (err.name || err.message)) ? ('<div class="small text-muted mt-2">' + (err.name ? err.name + ': ' : '') + (err.message || '') + '</div>') : '';
+            document.getElementById('reader').innerHTML = '<div class="p-5 bg-light text-danger fw-bold"><i class="bi bi-camera-video-off fs-1 d-block mb-2"></i>Por favor, permite el acceso a la cámara.' + errDetail + '</div>';
         });
     </script>
 </body>

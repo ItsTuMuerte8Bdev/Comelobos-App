@@ -94,7 +94,7 @@
                                         <option value="administrativo" {{ $usuario->role === 'administrativo' ? 'selected' : '' }}>Administrativo</option>
                                     </select>
 
-                                    <button type="button" class="btn btn-warning w-100 fw-bold rounded-pill py-2 shadow-sm text-dark" id="btn-open-role-modal" data-bs-toggle="modal" data-bs-target="#confirmRoleModal">
+                                    <button type="button" class="btn btn-warning w-100 fw-bold rounded-pill py-2 shadow-sm text-white" id="btn-open-role-modal" data-bs-toggle="modal" data-bs-target="#confirmRoleModal">
                                         <i class="bi bi-person-fill-gear me-2"></i> Aplicar Cambios
                                     </button>
                                 </form>
@@ -180,7 +180,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-warning text-dark" id="confirm-role-btn" data-bs-dismiss="modal">Confirmar</button>
+                                                <button type="button" class="btn btn-warning text-white" id="confirm-role-btn" data-bs-dismiss="modal">Confirmar</button>
                                             </div>
                                         </div>
                                     </div>
